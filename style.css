@@ -158,6 +158,78 @@ section {
   margin-top: 2.15rem;
 }
 
+main section details {
+  margin: 0;
+}
+
+main section details:not([open]) > .fold {
+  display: none;
+}
+
+main section summary {
+  display: block;
+  margin: 0;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--ink);
+  list-style: none;
+  cursor: pointer;
+}
+
+main section summary::-webkit-details-marker {
+  display: none;
+}
+
+main section summary::marker {
+  content: "";
+}
+
+main section summary:focus {
+  outline: none;
+}
+
+main section details[open] > summary {
+  margin-bottom: 1.05rem;
+}
+
+main section summary h2 {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  transition: background-color 0.16s linear, color 0.16s linear;
+}
+
+main section summary h2::before {
+  content: ">";
+  display: inline-block;
+  margin-right: 0.55rem;
+  letter-spacing: 0;
+  transform-origin: 50% 55%;
+  transition: transform 0.16s linear;
+}
+
+main section details[open] > summary h2::before {
+  transform: rotate(90deg);
+}
+
+main section summary:hover h2,
+main section summary:focus-visible h2 {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+main section details:not([open]) > summary:hover h2::before,
+main section details:not([open]) > summary:focus-visible h2::before {
+  transform: translateX(0.18rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main section summary h2,
+  main section summary h2::before {
+    transition: none;
+  }
+}
+
 .essay {
   max-width: 40rem;
 }
@@ -340,7 +412,11 @@ nav a {
 
 .theme {
   display: inline-flex;
+  align-self: stretch;
+  justify-content: flex-end;
   gap: 0.55rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--ink);
 }
 
 .theme button {
@@ -350,8 +426,9 @@ nav a {
   color: inherit;
   font: inherit;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
+  text-transform: lowercase;
   cursor: pointer;
+  font-size: 0.8rem;
 }
 
 .theme button:focus {
@@ -391,6 +468,10 @@ html[data-theme="dark"] .theme button[data-theme-set="dark"] {
   nav {
     justify-content: flex-start;
   }
+
+  .theme {
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 640px) {
@@ -421,8 +502,21 @@ html[data-theme="dark"] .theme button[data-theme-set="dark"] {
     padding: 0;
   }
 
-  nav {
+  nav,
+  .theme {
     display: none;
+  }
+
+  main section details > .fold {
+    display: block !important;
+  }
+
+  main section summary h2::before {
+    content: none;
+  }
+
+  main section details > summary {
+    margin-bottom: 1.05rem;
   }
 
   a {
