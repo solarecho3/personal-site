@@ -1,0 +1,435 @@
+:root {
+  --paper: #fff;
+  --ink: #000;
+  --text: "Univers LT Pro", Univers, "Univers LT Std", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --data: "TX-02-Data", "Berkeley Mono", "TX-02", "SF Mono", "Segoe UI Mono", "Roboto Mono", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  --paper: #000;
+  --ink: #fff;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+html {
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.5rem;
+  scroll-behavior: smooth;
+}
+
+body {
+  max-width: 88rem;
+  margin: 0 auto;
+  padding: 1.6rem clamp(1rem, 3vw, 2.75rem) 4.5rem;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--text);
+  font-weight: 400;
+}
+
+header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.4rem 3rem;
+  padding-bottom: 1.15rem;
+  border-bottom: 1px solid var(--ink);
+}
+
+.identity {
+  flex: 1 1 24rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.side {
+  flex: 0 1 18rem;
+  min-width: 0;
+  max-width: 100%;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.85rem;
+  text-align: right;
+}
+
+h1 {
+  margin: 0 0 0.45rem;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+h1 a {
+  text-decoration: none;
+}
+
+h2 {
+  margin: 0 0 1.05rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--ink);
+  font-family: var(--data);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  line-height: 1.2rem;
+  text-transform: uppercase;
+}
+
+h3 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+h3 .role {
+  min-width: 0;
+  text-wrap: balance;
+}
+
+h3 .when {
+  flex: 0 0 auto;
+  margin-left: auto;
+  font-weight: 300;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  font-family: var(--data);
+  text-transform: uppercase;
+}
+
+p {
+  margin: 0.55rem 0 0;
+  overflow-wrap: break-word;
+}
+
+.lede {
+  max-width: 40rem;
+  margin: 0;
+  font-family: var(--data);
+  font-size: 0.9rem;
+}
+
+.where,
+.meta,
+nav {
+  font-family: var(--data);
+  font-size: 0.8rem;
+  line-height: 1.35rem;
+}
+
+.where {
+  margin: 0.2rem 0 0;
+}
+
+.meta {
+  margin: 0;
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.35rem 1.15rem;
+}
+
+section {
+  margin-top: 2.15rem;
+}
+
+.essay {
+  max-width: 40rem;
+}
+
+.essay h1 {
+  margin-bottom: 1.1rem;
+}
+
+.essay h1:has(+ .where) {
+  margin-bottom: 0.2rem;
+}
+
+.essay h2 {
+  margin: 1.5rem 0 0;
+  padding: 0;
+  border: 0;
+  font-family: var(--text);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.3;
+  text-transform: none;
+}
+
+.essay h3 {
+  display: block;
+  margin: 1.15rem 0 0;
+  padding: 0;
+  border: 0;
+  font-family: var(--text);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.35;
+  text-align: left;
+  text-transform: none;
+}
+
+.essay p,
+.essay ul,
+.essay ol,
+.essay pre,
+.essay blockquote {
+  overflow-wrap: break-word;
+}
+
+.essay blockquote {
+  margin: 1rem 0 0;
+  padding: 0 0 0 1rem;
+  border-left: 1px solid var(--ink);
+  font-weight: 300;
+}
+
+.essay blockquote p {
+  margin: 0.35rem 0 0;
+}
+
+.essay blockquote p:first-child {
+  margin-top: 0;
+}
+
+.essay ul,
+.essay ol {
+  margin: 0.7rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.essay li {
+  margin: 0.2rem 0 0;
+}
+
+.essay li p {
+  margin: 0;
+}
+
+.essay strong {
+  font-weight: 700;
+}
+
+.essay em {
+  font-style: italic;
+}
+
+.essay code {
+  font-family: var(--data);
+  font-size: 0.92em;
+}
+
+.essay pre {
+  margin: 1rem 0 0;
+  padding: 0 0 0 1rem;
+  border-left: 1px solid var(--ink);
+  overflow-x: auto;
+  font-family: var(--data);
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+.essay pre code {
+  font-size: inherit;
+}
+
+.essay hr {
+  margin: 1.4rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--ink);
+}
+
+.essay a {
+  overflow-wrap: anywhere;
+}
+
+.spread {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1.6rem 2.4rem;
+}
+
+.spread > article {
+  flex: 1 1 calc((100% - 4.8rem) / 3);
+  max-width: calc((100% - 4.8rem) / 3);
+  min-width: 0;
+}
+
+#essay-list a.role {
+  overflow-wrap: break-word;
+}
+
+#media-list .role {
+  overflow-wrap: break-word;
+}
+
+#media-list a.thumb {
+  display: block;
+  margin: 0 0 0.45rem;
+  overflow: hidden;
+  background: #000;
+  line-height: 0;
+  text-decoration: none;
+  aspect-ratio: 16 / 9;
+}
+
+#media-list a.thumb:hover,
+#media-list a.thumb:focus-visible {
+  background: #000;
+  color: inherit;
+}
+
+#media-list a.thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+a {
+  color: var(--ink);
+  text-underline-offset: 2px;
+}
+
+a:visited {
+  color: var(--ink);
+}
+
+a:hover,
+a:focus-visible {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+nav a {
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.theme {
+  display: inline-flex;
+  gap: 0.55rem;
+}
+
+.theme button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.theme button:focus {
+  outline: none;
+}
+
+.theme button:hover,
+.theme button:focus-visible,
+html:not([data-theme="dark"]) .theme button[data-theme-set="light"],
+html[data-theme="dark"] .theme button[data-theme-set="dark"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+@media (max-width: 1000px) {
+  .spread > article {
+    flex-basis: calc((100% - 2.4rem) / 2);
+    max-width: calc((100% - 2.4rem) / 2);
+  }
+}
+
+@media (max-width: 760px) {
+  header {
+    display: block;
+  }
+
+  .side {
+    margin: 1.1rem 0 0;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .lede {
+    max-width: none;
+  }
+
+  nav {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .spread {
+    display: block;
+  }
+
+  .spread > article {
+    max-width: none;
+    margin-top: 1.5rem;
+  }
+
+  .spread > article:first-child {
+    margin-top: 0;
+  }
+}
+
+@media print {
+  :root,
+  html[data-theme="dark"] {
+    --paper: #fff;
+    --ink: #000;
+    color-scheme: light;
+  }
+
+  body {
+    max-width: none;
+    padding: 0;
+  }
+
+  nav {
+    display: none;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  section {
+    break-inside: avoid;
+  }
+}

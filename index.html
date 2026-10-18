@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script>try { var saved = localStorage.getItem("theme"); if (saved === "dark" || (saved !== "light" && matchMedia("(prefers-color-scheme: dark)").matches)) document.documentElement.setAttribute("data-theme", "dark"); } catch (e) {}</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Adam Smith</title>
+  <link rel="icon" href="favicon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="identity">
+      <h1>Adam Smith</h1>
+      <p class="lede">- Co-founder, CTO - <a href="https://larx.io">Larx</a>.<br>
+      - US Special Operations Command Applied AI Engineer.<br>
+      - American special operator.</p>
+    </div>
+    <div class="side">
+      <nav>
+        <a href="#experience">Experience</a>
+        <a href="#essays">Essays</a>
+        <a href="#media">Media</a>
+        <span class="theme">
+          <button type="button" data-theme-set="light">Light</button>
+          <button type="button" data-theme-set="dark">Dark</button>
+        </span>
+      </nav>
+      <p class="meta">soldier, cto, idiot<br>
+      <a href="https://x.com/solarecho3" rel="me" target="#">X</a> · <a href="https://www.instagram.com/solarecho3" rel="me" target="#">Instagram</a></p>
+    </div>
+  </header>
+
+  <main>
+    <section id="experience">
+      <h2>Experience</h2>
+      <div class="spread">
+        <article>
+          <h3><span class="role">Chief Technology Officer</span><span class="when">2025-Present</span></h3>
+          <p class="where">Co-founded Larx, an intelligence platform for the agentic age.</p>
+        </article>
+        <article>
+          <h3><span class="role">Applied AI Engineer</span><span class="when">2021-2025</span></h3>
+          <p class="where">Member and team lead in the US Special Operations Command Intelligence Data Science Team.</p>
+        </article>
+        <article>
+          <h3><span class="role">Special Operator</span><span class="when">2007-2023</span></h3>
+          <p class="where">US Army Special Forces (Green Beret) soldier, specializing in communications and intelligence, and later, led a detachment. Global Response Staff officer. Ranger, Jumpmaster, Combat Diver, awarded for combat valor.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="essays">
+      <h2>Essays</h2>
+      <div id="essay-list" class="spread">
+        <p class="where">No essays posted.</p>
+      </div>
+    </section>
+
+    <section id="media">
+      <h2>Media</h2>
+      <div id="media-list" class="spread">
+        <article>
+          <a class="thumb" href="https://www.youtube.com/watch?v=6uIRpblC0ws" target="_blank" rel="noopener noreferrer"><img src="https://i.ytimg.com/vi/6uIRpblC0ws/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer"></a>
+          <h3><a class="role" href="https://www.youtube.com/watch?v=6uIRpblC0ws" target="_blank" rel="noopener noreferrer">STRUGGLE</a></h3>
+          <p class="where">dont quit</p>
+        </article>
+      </div>
+    </section>
+  </main>
+  <script src="theme.js"></script>
+</body>
+</html>

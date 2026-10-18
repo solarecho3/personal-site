@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .paper { fill: #fff; }
+    .ink { fill: none; stroke: #000; }
+    .mark { fill: #000; }
+  </style>
+  <rect class="paper" width="32" height="32"/>
+  <rect class="ink" x="1.5" y="1.5" width="29" height="29" stroke-width="2"/>
+  <text class="mark" x="16" y="23" text-anchor="middle" font-family="Georgia, serif" font-size="20">A</text>
+</svg>

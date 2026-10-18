@@ -1,0 +1,6 @@
+# Local only. GitHub Pages publishes every file that is uploaded.
+editor.html
+edit.bat
+edit.py
+essay.js
+__pycache__/
