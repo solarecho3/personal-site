@@ -433,6 +433,35 @@ main section details:not([open]) > summary:focus-visible h2::before {
   margin: 0 0 1.05rem;
 }
 
+#essay-sort {
+  margin: 0 0 0.2rem;
+}
+
+#essay-sort button {
+  appearance: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+#essay-sort button[aria-pressed="true"] {
+  font-weight: 700;
+}
+
+#essay-sort button:focus {
+  outline: none;
+}
+
+#essay-sort button:hover,
+#essay-sort button:focus-visible {
+  background: var(--ink);
+  color: var(--paper);
+}
+
 #essay-none {
   margin: 0.8rem 0 0;
 }
@@ -620,7 +649,8 @@ html[data-theme="dark"] .theme button[data-theme-set="dark"] {
   }
 
   nav,
-  .theme {
+  .theme,
+  #essay-sort {
     display: none;
   }
 

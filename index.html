@@ -91,17 +91,26 @@
       <details open>
         <summary><h2>Journal</h2></summary>
         <div class="fold">
+        <p class="tags" id="essay-sort" role="group" aria-label="Sort">
+          <button type="button" data-sort="newest" aria-pressed="true">newest</button>
+          ·
+          <button type="button" data-sort="oldest" aria-pressed="false">oldest</button>
+          ·
+          <button type="button" data-sort="az" aria-pressed="false">a-z</button>
+          ·
+          <button type="button" data-sort="za" aria-pressed="false">z-a</button>
+        </p>
         <p class="tags" id="essay-tags" hidden></p>
         <div id="essay-list" class="spread">
-        <article data-tags="code,logic">
-          <h3><a class="role" href="essays/computer-logic.html">Computer Logic</a></h3>
-          <p class="where">NAND gates as logical basis</p>
-          <p class="tags"><a href="#journal/code">code</a> · <a href="#journal/logic">logic</a></p>
-        </article>
-        <article data-tags="philosophy,dying">
+        <article data-date="2026-10-21T01:03:06Z" data-tags="philosophy,dying">
           <h3><a class="role" href="essays/on-dying.html">On dying</a></h3>
           <p class="where">I&#x27;ve died a thousand times</p>
           <p class="tags"><a href="#journal/philosophy">philosophy</a> · <a href="#journal/dying">dying</a></p>
+        </article>
+        <article data-date="2026-10-21T01:02:06Z" data-tags="code,logic">
+          <h3><a class="role" href="essays/computer-logic.html">Computer Logic</a></h3>
+          <p class="where">NAND gates as logical basis</p>
+          <p class="tags"><a href="#journal/code">code</a> · <a href="#journal/logic">logic</a></p>
         </article>
       </div>
         <p class="where" id="essay-none" hidden>No journal entries with that tag.</p>
@@ -143,6 +152,41 @@
         });
         tags.sort();
         return tags;
+      }
+
+      var sortMode = "newest";
+
+      function entryDate(article) {
+        return article.getAttribute("data-date") || "";
+      }
+
+      function entryTitle(article) {
+        var link = article.querySelector("h3 a");
+        return (link ? link.textContent : "").trim();
+      }
+
+      function compareEntries(a, b) {
+        var title = entryTitle(a).localeCompare(entryTitle(b), undefined, { sensitivity: "base" });
+        var date = entryDate(a).localeCompare(entryDate(b));
+        if (sortMode === "az" || sortMode === "za") {
+          if (title === 0) title = date;
+          return sortMode === "az" ? title : -title;
+        }
+        if (date === 0) date = title;
+        return sortMode === "oldest" ? date : -date;
+      }
+
+      function applySort() {
+        var list = document.getElementById("essay-list");
+        if (!list) return;
+        var articles = Array.prototype.slice.call(list.querySelectorAll("article"));
+        articles.sort(compareEntries);
+        articles.forEach(function (article) { list.appendChild(article); });
+        var row = document.getElementById("essay-sort");
+        if (!row) return;
+        row.querySelectorAll("button").forEach(function (button) {
+          button.setAttribute("aria-pressed", button.getAttribute("data-sort") === sortMode ? "true" : "false");
+        });
       }
 
       function applyEssayTag(tag) {
@@ -212,6 +256,19 @@
       window.addEventListener("popstate", function () {
         go(location.hash);
       });
+      var sortRow = document.getElementById("essay-sort");
+      if (sortRow) {
+        sortRow.addEventListener("click", function (event) {
+          var node = event.target;
+          while (node && node !== sortRow && node.tagName !== "BUTTON") node = node.parentNode;
+          if (!node || node === sortRow) return;
+          var mode = node.getAttribute("data-sort");
+          if (!mode || mode === sortMode) return;
+          sortMode = mode;
+          applySort();
+        });
+      }
+      applySort();
       if (location.hash) go(location.hash);
       else applyEssayTag("");
     })();
