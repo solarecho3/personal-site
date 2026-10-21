@@ -48,6 +48,8 @@ A **NOR** gate is an **OR** gate, which outputs to an **AND** gate.
 
 ```python
 """
+AND, OR, NOR, NOT, Buffer, XOR, XNOR using NAND
+
 import main
 &gt;&gt;&gt; g11 = main.GATE(1,1)
 &gt;&gt;&gt; g10 = main.GATE(1,0)
@@ -96,6 +98,17 @@ class GATE:
         def BUFFER(self):
                 result_a, result_b = self.NOT()
                 return (self._NAND(result_a, result_a), self._NAND(result_b, result_b))
+
+        def XOR(self):
+                result1 = self._NAND(self.x1, self.x2)
+                result2 = self._NAND(self.x1, result1)
+                result3 = self._NAND(self.x2, result1)
+                return self._NAND(result2, result3)
+
+        def XNOR(self):
+                result1 = self._NAND(self.x1, self.x2)
+                result2 = self.OR()
+                return self._NAND(result1, result2)
 ```</textarea>
     </article>
   </main>
