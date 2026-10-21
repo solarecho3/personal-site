@@ -54,7 +54,7 @@
     <div class="side">
       <nav>
         <a href="#career">Career</a>
-        <a href="#essays">Essays</a>
+        <a href="#journal">Journal</a>
         <a href="#media">Media</a>
       </nav>
       <span class="theme">
@@ -87,13 +87,24 @@
       </details>
     </section>
 
-    <section id="essays">
+    <section id="journal">
       <details open>
-        <summary><h2>Essays</h2></summary>
+        <summary><h2>Journal</h2></summary>
         <div class="fold">
+        <p class="tags" id="essay-tags" hidden></p>
         <div id="essay-list" class="spread">
-        <p class="where">No essays posted.</p>
+        <article data-tags="code,logic">
+          <h3><a class="role" href="essays/computer-logic.html">Computer Logic</a></h3>
+          <p class="where">NAND gates as logical basis</p>
+          <p class="tags"><a href="#journal/code">code</a> · <a href="#journal/logic">logic</a></p>
+        </article>
+        <article data-tags="philosophy,dying">
+          <h3><a class="role" href="essays/on-dying.html">On dying</a></h3>
+          <p class="where">I&#x27;ve died a thousand times</p>
+          <p class="tags"><a href="#journal/philosophy">philosophy</a> · <a href="#journal/dying">dying</a></p>
+        </article>
       </div>
+        <p class="where" id="essay-none" hidden>No journal entries with that tag.</p>
         </div>
       </details>
     </section>
@@ -116,7 +127,68 @@
   <script src="theme.js"></script>
   <script>
     (function () {
-      function go(name) {
+      function tagList(article) {
+        return (article.getAttribute("data-tags") || "").split(",").filter(Boolean);
+      }
+
+      function knownTags() {
+        var seen = {};
+        var tags = [];
+        document.querySelectorAll("#essay-list article").forEach(function (article) {
+          tagList(article).forEach(function (tag) {
+            if (seen[tag]) return;
+            seen[tag] = true;
+            tags.push(tag);
+          });
+        });
+        tags.sort();
+        return tags;
+      }
+
+      function applyEssayTag(tag) {
+        var articles = document.querySelectorAll("#essay-list article");
+        var shown = 0;
+        articles.forEach(function (article) {
+          var on = !tag || tagList(article).indexOf(tag) !== -1;
+          article.hidden = !on;
+          if (on) shown += 1;
+        });
+        var row = document.getElementById("essay-tags");
+        var none = document.getElementById("essay-none");
+        if (row) {
+          while (row.firstChild) row.removeChild(row.firstChild);
+          var tags = knownTags();
+          row.hidden = !tags.length;
+          function add(label, value) {
+            if (row.firstChild) row.appendChild(document.createTextNode(" · "));
+            var link = document.createElement("a");
+            link.href = value ? "#journal/" + encodeURIComponent(value) : "#journal";
+            link.textContent = label;
+            if ((value || "") === (tag || "")) link.setAttribute("aria-current", "true");
+            row.appendChild(link);
+          }
+          if (tags.length) {
+            add("all", "");
+            tags.forEach(function (name) { add(name, name); });
+          }
+        }
+        if (none) none.hidden = !(tag && articles.length && shown === 0);
+      }
+
+      function splitHash(raw) {
+        var value = String(raw || "").replace(/^#/, "");
+        var cut = value.indexOf("/");
+        if (cut === -1) return { section: value, tag: "" };
+        var tag = value.slice(cut + 1);
+        try { tag = decodeURIComponent(tag.replace(/\+/g, " ")); }
+        catch (error) { tag = ""; }
+        return { section: value.slice(0, cut), tag: tag };
+      }
+
+      function go(raw) {
+        var parsed = splitHash(raw);
+        var name = parsed.section === "essays" ? "journal" : parsed.section;
+        applyEssayTag(name === "journal" ? parsed.tag : "");
         var section = name && document.getElementById(name);
         if (!section) return;
         var box = section.querySelector("details");
@@ -128,16 +200,20 @@
       document.querySelectorAll("nav a[href^='#']").forEach(function (link) {
         link.addEventListener("click", function (event) {
           var name = link.getAttribute("href").slice(1);
-          if (!document.getElementById(name)) return;
+          if (!document.getElementById(name.split("/")[0])) return;
           event.preventDefault();
           if (location.hash !== "#" + name) history.pushState(null, "", "#" + name);
           go(name);
         });
       });
-      window.addEventListener("popstate", function () {
-        go(location.hash.slice(1));
+      window.addEventListener("hashchange", function () {
+        go(location.hash);
       });
-      if (location.hash) go(location.hash.slice(1));
+      window.addEventListener("popstate", function () {
+        go(location.hash);
+      });
+      if (location.hash) go(location.hash);
+      else applyEssayTag("");
     })();
   </script>
 </body>

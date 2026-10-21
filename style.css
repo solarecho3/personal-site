@@ -3,12 +3,40 @@
   --ink: #000;
   --text: "Univers LT Pro", Univers, "Univers LT Std", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --data: "TX-02-Data", "Berkeley Mono", "TX-02", "SF Mono", "Segoe UI Mono", "Roboto Mono", Menlo, Consolas, monospace;
+  --code-comment: #6e6a64;
+  --code-string: #1f6a45;
+  --code-keyword: #9f2d2d;
+  --code-number: #8d4d12;
+  --code-function: #1f4e79;
+  --code-type: #5c3d7a;
+  --code-builtin: #1a5c78;
+  --code-property: #1f4e79;
+  --code-attr: #8d4d12;
+  --code-tag: #9f2d2d;
+  --code-variable: #8d4d12;
+  --code-operator: #242424;
+  --code-punct: #5e5a55;
+  --code-label: #6e6a64;
   color-scheme: light;
 }
 
 html[data-theme="dark"] {
   --paper: #000;
   --ink: #fff;
+  --code-comment: #a39e96;
+  --code-string: #7dcea0;
+  --code-keyword: #f0a08a;
+  --code-number: #e6b15c;
+  --code-function: #9ec4ea;
+  --code-type: #d2b4ea;
+  --code-builtin: #8fd0d8;
+  --code-property: #9ec4ea;
+  --code-attr: #e6b15c;
+  --code-tag: #f0a08a;
+  --code-variable: #e6b15c;
+  --code-operator: #f3f3f3;
+  --code-punct: #bdb8b0;
+  --code-label: #a39e96;
   color-scheme: dark;
 }
 
@@ -342,7 +370,37 @@ main section details:not([open]) > summary:focus-visible h2::before {
   font-weight: 400;
   line-height: 1.45;
   white-space: pre-wrap;
+  tab-size: 4;
 }
+
+.essay pre[data-lang]::before {
+  content: attr(data-lang);
+  display: block;
+  margin: 0 0 0.35rem;
+  font-family: var(--data);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  line-height: 1.2rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+  user-select: none;
+  color: var(--code-label);
+}
+
+.essay pre .tok-comment { color: var(--code-comment); }
+.essay pre .tok-string { color: var(--code-string); }
+.essay pre .tok-keyword { color: var(--code-keyword); font-weight: 700; }
+.essay pre .tok-number { color: var(--code-number); }
+.essay pre .tok-function { color: var(--code-function); }
+.essay pre .tok-type { color: var(--code-type); }
+.essay pre .tok-builtin { color: var(--code-builtin); }
+.essay pre .tok-property { color: var(--code-property); }
+.essay pre .tok-attr { color: var(--code-attr); }
+.essay pre .tok-tag { color: var(--code-tag); }
+.essay pre .tok-variable { color: var(--code-variable); }
+.essay pre .tok-operator { color: var(--code-operator); }
+.essay pre .tok-punct { color: var(--code-punct); }
 
 .essay pre code {
   font-size: inherit;
@@ -352,6 +410,35 @@ main section details:not([open]) > summary:focus-visible h2::before {
   margin: 1.4rem 0 0;
   border: 0;
   border-top: 1px solid var(--ink);
+}
+
+.tags {
+  margin: 0.35rem 0 0;
+  font-family: var(--data);
+  font-size: 0.8rem;
+  line-height: 1.35rem;
+  overflow-wrap: anywhere;
+}
+
+.tags a {
+  text-decoration: none;
+  letter-spacing: 0.04em;
+}
+
+.tags a[aria-current="true"] {
+  font-weight: 700;
+}
+
+#essay-tags {
+  margin: 0 0 1.05rem;
+}
+
+#essay-none {
+  margin: 0.8rem 0 0;
+}
+
+.spread > article[hidden] {
+  display: none;
 }
 
 .essay a {
@@ -510,6 +597,20 @@ html[data-theme="dark"] .theme button[data-theme-set="dark"] {
   html[data-theme="dark"] {
     --paper: #fff;
     --ink: #000;
+    --code-comment: #6e6a64;
+    --code-string: #1f6a45;
+    --code-keyword: #9f2d2d;
+    --code-number: #8d4d12;
+    --code-function: #1f4e79;
+    --code-type: #5c3d7a;
+    --code-builtin: #1a5c78;
+    --code-property: #1f4e79;
+    --code-attr: #8d4d12;
+    --code-tag: #9f2d2d;
+    --code-variable: #8d4d12;
+    --code-operator: #242424;
+    --code-punct: #5e5a55;
+    --code-label: #6e6a64;
     color-scheme: light;
   }
 
