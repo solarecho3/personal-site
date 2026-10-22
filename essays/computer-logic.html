@@ -147,6 +147,44 @@ class PERCEPTRON:
 
 
 # etc
+
+# NAND gates and perceptrons form the basis of compute and the earliest vestiges
+# of computer thinking and learning. But perceptrons can only learn linear problems.
+# Non-linear problems, that is, most problems today, require non-linear neurons.
+
+class SIGMOID_NEURON:
+        """A perceptron can become non-linear by changing the activation
+        to a sigmoid function. The benefits go beyond linearity. Perceptrons
+        can be extremely sensitive to weight changes, and tuning one
+        perceptron can change the output of the entire model.
+
+        The sigmoid function: σ = 1/ 1+e^-x, where x is the input, and e
+        is Euler's number. (~2.718281828459045). It's asymptotic, so any
+        input will output within the open interval between the 0 and 1
+        asymptotes. It's also differentiable, meaning we can calculate
+        the slope at any point, which is used in backpropagation to
+        compute each weight's contribution to the output. That slope is
+        used by optimizers to adjust weights and induce learning.
+        """
+
+        def _init__(self, x1, x2):
+                self.x1 = x1
+                self.x2 = x2
+
+        def sigmoid(x):
+                """
+                &gt;&gt;&gt; s.sigmoid(2)
+                0.8807970779778823
+                &gt;&gt;&gt; s.sigmoid(3)
+                0.9525741268224334
+                &gt;&gt;&gt; s.sigmoid(4)
+                0.9820137900379085
+                &gt;&gt;&gt; s.sigmoid(5)
+                0.9933071490757153
+                &gt;&gt;&gt; s.sigmoid(10)
+                0.9999546021312976
+                """
+                return 1 / (1 + (math.exp(-1*x)))
 ```</textarea>
     </article>
   </main>
