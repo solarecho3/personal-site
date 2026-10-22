@@ -49,6 +49,8 @@ A **NOR** gate is an **OR** gate, which outputs to an **AND** gate.
 Similarly, a correctly tuned perceptron can act as a NAND gate to form the blocks of a logic circuit of only perceptrons.
 
 ```python
+import math
+
 """
 AND, OR, NOR, NOT, Buffer, XOR, XNOR using NAND
 
@@ -113,7 +115,12 @@ class GATE:
                 return self._NAND(result1, result2)
 
 class PERCEPTRON:
-        """Perceptrons as NAND logic gates."""
+        """A perceptron is a simple neuron.
+        y = wx + b. Note the similarity to the slope-intercept equation.
+        Perceptrons are linear. Perceptrons tuned with weight -2 and bias 3
+        behave like NAND gates. In the NAND gate, we've added an activation.
+        In this case, the perceptron is tuned for NAND logic.
+        """
         def __init__(self, x1, x2):
                 self.x1 = x1
                 self.x2 = x2
@@ -137,6 +144,8 @@ class PERCEPTRON:
         def AND(self):
                 result = self._NAND(self.x1, self.x2)
                 return self._NAND(result, result)
+
+
 # etc
 ```</textarea>
     </article>
