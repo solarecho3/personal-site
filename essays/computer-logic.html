@@ -33,7 +33,7 @@
   <main>
     <article class="essay">
       <h1>Computer Logic</h1>
-      <p class="where">NAND gates as logical basis</p>
+      <p class="where">NAND gates as logical basis, and perceptrons as NAND gates</p>
       <p class="tags"><a href="../#journal/code">code</a> · <a href="../#journal/logic">logic</a></p>
       <div id="essay-body"></div>
       <textarea id="essay-source" hidden>All binary logic circuits can be computed with NOT AND gates.
@@ -45,6 +45,8 @@
 An **OR** gate feeds input 1 to both inputs of one **NAND** gate, and input 2 to both inputs of another **NAND** gate. The two outputs are fed to the inputs of another **NAND** gate.
 
 A **NOR** gate is an **OR** gate, which outputs to an **AND** gate.
+
+Similarly, a correctly tuned perceptron can act as a NAND gate to form the blocks of a logic circuit of only perceptrons.
 
 ```python
 """
@@ -109,6 +111,33 @@ class GATE:
                 result1 = self._NAND(self.x1, self.x2)
                 result2 = self.OR()
                 return self._NAND(result1, result2)
+
+class PERCEPTRON:
+        """Perceptrons as NAND logic gates."""
+        def __init__(self, x1, x2):
+                self.x1 = x1
+                self.x2 = x2
+                self.weight = -2
+                self.bias = 3
+
+        def NAND(self):
+                result = ((self.x1 * self.weight) + (self.x2 * self.weight)) + self.bias
+                if result &lt;= 0:
+                        return 0
+                if result &gt;= 1:
+                        return 1
+
+        def _NAND(self, x1, x2):
+                result = ((x1 * self.weight) + (x2 * self.weight)) + self.bias
+                if result &lt;= 0:
+                        return 0
+                if result &gt;= 1:
+                        return 1
+
+        def AND(self):
+                result = self._NAND(self.x1, self.x2)
+                return self._NAND(result, result)
+# etc
 ```</textarea>
     </article>
   </main>
