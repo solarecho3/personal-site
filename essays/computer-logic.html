@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <script>try { var saved = localStorage.getItem("theme"); if (saved === "dark" || (saved !== "light" && matchMedia("(prefers-color-scheme: dark)").matches)) document.documentElement.setAttribute("data-theme", "dark"); } catch (e) {}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Computer Logic · Adam Smith</title>
+  <title>Computer Thinking · Adam Smith</title>
   <link rel="icon" href="../favicon.svg">
   <link rel="stylesheet" href="../style.css">
 </head>
@@ -32,9 +32,9 @@
   </header>
   <main>
     <article class="essay">
-      <h1>Computer Logic</h1>
+      <h1>Computer Thinking</h1>
       <p class="where">NAND gates as logical basis, and perceptrons as NAND gates</p>
-      <p class="tags"><a href="../#journal/code">code</a> · <a href="../#journal/logic">logic</a></p>
+      <p class="tags"><a href="../#journal/code">code</a> · <a href="../#journal/logic">logic</a> · <a href="../#journal/thinking">thinking</a> · <a href="../#journal/compute">compute</a></p>
       <div id="essay-body"></div>
       <textarea id="essay-source" hidden>All binary logic circuits can be computed with NOT AND gates.
 
@@ -115,11 +115,13 @@ class GATE:
                 return self._NAND(result1, result2)
 
 class PERCEPTRON:
-        """A perceptron is a simple neuron.
-        y = wx + b. Note the similarity to the slope-intercept equation.
+        """A perceptron is a simple neuron. y = wx + b.
+        Note the similarity to the slope-intercept equation.
         Perceptrons are linear. Perceptrons tuned with weight -2 and bias 3
         behave like NAND gates. In the NAND gate, we've added an activation.
-        In this case, the perceptron is tuned for NAND logic.
+        In this case, the perceptron is tuned for NAND logic. If we use a
+        loss function to modify the weights in a training loop, the
+        perceptron can learn.
         """
         def __init__(self, x1, x2):
                 self.x1 = x1
@@ -129,14 +131,14 @@ class PERCEPTRON:
 
         def NAND(self):
                 result = ((self.x1 * self.weight) + (self.x2 * self.weight)) + self.bias
-                if result &lt;= 0:
+                if result &lt; 0:
                         return 0
                 if result &gt;= 1:
                         return 1
 
         def _NAND(self, x1, x2):
                 result = ((x1 * self.weight) + (x2 * self.weight)) + self.bias
-                if result &lt;= 0:
+                if result &lt; 0:
                         return 0
                 if result &gt;= 1:
                         return 1
@@ -145,8 +147,17 @@ class PERCEPTRON:
                 result = self._NAND(self.x1, self.x2)
                 return self._NAND(result, result)
 
+        # etc for all logic
 
-# etc
+        # Perceptron as neuron
+        def compute(self, x):
+                return (self.weight * x + self.bias)
+
+        def activate(self, z):
+                if z &lt; 0:
+                        return 0
+                if z &gt;= 0:
+                        return 1
 
 # NAND gates and perceptrons form the basis of compute and the earliest vestiges
 # of computer thinking and learning. But perceptrons can only learn linear problems.
@@ -185,6 +196,7 @@ class SIGMOID_NEURON:
                 0.9999546021312976
                 """
                 return 1 / (1 + (math.exp(-1*x)))
+
 ```</textarea>
     </article>
   </main>
