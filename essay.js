@@ -3,7 +3,11 @@
    A code block is lines wrapped in ``` marks. The word on the opening line,
    such as python, says which language it is. The editor and the journal page
    split that block into colored pieces. The colors are in style.css and
-   follow the light or dark appearance. */
+   follow the light or dark appearance.
+   On the journal page each source line has a line number. A source line is one
+   line as written, before the browser folds it to fit the screen. The number
+   stays on the first row of that line, so a fold pushes the next number down.
+   The editor does not add numbers: the caret and the saved text stay the code. */
 (function (root) {
   var MAX = 200000;
 
@@ -842,29 +846,80 @@
     return tokenizeFamily(source, described.family);
   }
 
-  function paint(code, text, lang) {
+  function appendPiece(parent, kind, text) {
+    if (!text) return;
+    if (!kind || !TOKEN_KINDS[kind]) {
+      parent.appendChild(document.createTextNode(text));
+      return;
+    }
+    var span = document.createElement("span");
+    span.className = "tok-" + kind;
+    span.textContent = text;
+    parent.appendChild(span);
+  }
+
+  function piecesByLine(source, lang) {
     var described = codeLanguage(lang);
-    while (code.firstChild) code.removeChild(code.firstChild);
-    var source = String(text || "");
+    var parts = [];
+    if (!described.family) {
+      if (source) parts = [{ kind: "", text: source }];
+    } else if (source) {
+      parts = tokenize(source, described.label);
+    }
+    var lines = [[]];
+    for (var i = 0; i < parts.length; i++) {
+      var chunks = String(parts[i].text || "").split("\n");
+      for (var c = 0; c < chunks.length; c++) {
+        if (c > 0) lines.push([]);
+        if (chunks[c]) lines[lines.length - 1].push({ kind: parts[i].kind || "", text: chunks[c] });
+      }
+    }
+    return lines;
+  }
+
+  function paintFlat(code, source, lang) {
+    var described = codeLanguage(lang);
     if (!described.family) {
       if (source) code.appendChild(document.createTextNode(source));
       else code.appendChild(document.createElement("br"));
       return;
     }
     var parts = tokenize(source, described.label);
-    for (var i = 0; i < parts.length; i++) {
-      var part = parts[i];
-      if (!part.text) continue;
-      if (!part.kind || !TOKEN_KINDS[part.kind]) {
-        code.appendChild(document.createTextNode(part.text));
-        continue;
-      }
-      var span = document.createElement("span");
-      span.className = "tok-" + part.kind;
-      span.textContent = part.text;
-      code.appendChild(span);
-    }
+    for (var i = 0; i < parts.length; i++) appendPiece(code, parts[i].kind, parts[i].text);
     if (!code.firstChild) code.appendChild(document.createElement("br"));
+  }
+
+  function paintLines(code, source, lang) {
+    var lines = piecesByLine(source, lang);
+    var host = code.parentNode && code.parentNode.nodeType === 1 ? code.parentNode : code;
+    host.style.setProperty("--line-digits", String(String(lines.length).length));
+    code.classList.add("lined");
+    for (var i = 0; i < lines.length; i++) {
+      var line = document.createElement("span");
+      line.className = "line";
+      var src = document.createElement("span");
+      src.className = "src";
+      var pieces = lines[i];
+      for (var p = 0; p < pieces.length; p++) appendPiece(src, pieces[p].kind, pieces[p].text);
+      line.appendChild(src);
+      code.appendChild(line);
+      if (i < lines.length - 1) {
+        var nl = document.createElement("span");
+        nl.className = "nl";
+        nl.textContent = "\n";
+        code.appendChild(nl);
+      }
+    }
+  }
+
+  function paint(code, text, lang, lined) {
+    while (code.firstChild) code.removeChild(code.firstChild);
+    code.classList.remove("lined");
+    var host = code.parentNode && code.parentNode.nodeType === 1 ? code.parentNode : null;
+    if (host && host.style) host.style.removeProperty("--line-digits");
+    var source = String(text || "");
+    if (lined) paintLines(code, source, lang);
+    else paintFlat(code, source, lang);
   }
 
   function fenceAround(markdown, pos) {
@@ -896,7 +951,13 @@
     return null;
   }
 
-  function renderBlocks(markdown, container) {
+  function editingHost(container) {
+    if (!container || !container.closest) return false;
+    if (container.getAttribute && container.getAttribute("contenteditable") === "true") return true;
+    return !!container.closest("[contenteditable='true']");
+  }
+
+  function renderBlocks(markdown, container, lined) {
     var lines = String(markdown || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
     var index = 0;
     while (index < lines.length) {
@@ -922,8 +983,8 @@
         pre.setAttribute("spellcheck", "false");
         if (described.label) pre.setAttribute("data-lang", described.label);
         var code = document.createElement("code");
-        paint(code, body.join("\n"), described.label);
         pre.appendChild(code);
+        paint(code, body.join("\n"), described.label, lined);
         container.appendChild(pre);
         continue;
       }
@@ -986,7 +1047,7 @@
     if (source.length > MAX) source = source.slice(0, MAX);
     clear(container);
     try {
-      renderBlocks(source, container);
+      renderBlocks(source, container, !editingHost(container));
     } catch (error) {
       clear(container);
       var paragraph = document.createElement("p");
@@ -1002,6 +1063,104 @@
     render(source.value, body);
   }
 
+  function linedCodeFrom(node) {
+    var el = node && (node.nodeType === 1 ? node : node.parentNode);
+    if (!el || !el.closest) return null;
+    var code = el.closest("code.lined");
+    return code || null;
+  }
+
+  function lineRows(code) {
+    var rows = [];
+    var child = code.firstChild;
+    while (child) {
+      if (child.nodeType === 1 && child.classList.contains("line")) rows.push(child);
+      child = child.nextSibling;
+    }
+    return rows;
+  }
+
+  function offsetInSrc(src, container, offset) {
+    if (container === src) {
+      var acc = 0;
+      for (var i = 0; i < offset && i < src.childNodes.length; i++) acc += src.childNodes[i].textContent.length;
+      return acc;
+    }
+    if (!src.contains(container)) return null;
+    if (container.nodeType === 1) {
+      var prior = 0;
+      var walk = document.createTreeWalker(src, NodeFilter.SHOW_TEXT, null);
+      var text = walk.nextNode();
+      while (text && !container.contains(text)) {
+        prior += text.textContent.length;
+        text = walk.nextNode();
+      }
+      var inside = 0;
+      for (var n = 0; n < offset && n < container.childNodes.length; n++) inside += container.childNodes[n].textContent.length;
+      return prior + inside;
+    }
+    var seen = 0;
+    var walker = document.createTreeWalker(src, NodeFilter.SHOW_TEXT, null);
+    var node = walker.nextNode();
+    while (node) {
+      if (node === container) return seen + Math.max(0, Math.min(offset, node.textContent.length));
+      seen += node.textContent.length;
+      node = walker.nextNode();
+    }
+    return seen;
+  }
+
+  function pointOffset(src, container, offset) {
+    if (container === src || src.contains(container)) return offsetInSrc(src, container, offset);
+    if (container === src.parentNode) return offset <= 0 ? 0 : src.textContent.length;
+    return null;
+  }
+
+  function sliceLine(src, range) {
+    var line = src.parentNode;
+    if (!range.intersectsNode(line)) return null;
+    var text = src.textContent;
+    var from = 0;
+    var to = text.length;
+    var start = pointOffset(src, range.startContainer, range.startOffset);
+    var end = pointOffset(src, range.endContainer, range.endOffset);
+    if (start != null) from = start;
+    if (end != null) to = end;
+    if (to < from) return text.slice(to, from);
+    return text.slice(from, to);
+  }
+
+  function linedSelection(range) {
+    if (!range) return null;
+    var code = linedCodeFrom(range.startContainer);
+    if (!code || code !== linedCodeFrom(range.endContainer)) return null;
+    var rows = lineRows(code);
+    var parts = [];
+    var started = false;
+    for (var i = 0; i < rows.length; i++) {
+      var src = rows[i].querySelector(".src");
+      if (!src) continue;
+      var piece = sliceLine(src, range);
+      if (piece == null) {
+        if (started) break;
+        continue;
+      }
+      started = true;
+      parts.push(piece);
+    }
+    if (!started) return null;
+    return parts.join("\n");
+  }
+
+  function copyLinedCode(event) {
+    var selection = window.getSelection();
+    if (!selection || selection.isCollapsed || !selection.rangeCount || !event.clipboardData) return;
+    var text = linedSelection(selection.getRangeAt(0));
+    if (text == null) return;
+    event.preventDefault();
+    event.clipboardData.setData("text/plain", text);
+  }
+
   root.Essay = {
     render: render,
     safeUrl: safeUrl,
@@ -1012,6 +1171,7 @@
   };
 
   if (typeof document !== "undefined") {
+    document.addEventListener("copy", copyLinedCode);
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
     else boot();
   }

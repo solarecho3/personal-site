@@ -364,12 +364,13 @@ main section details:not([open]) > summary:focus-visible h2::before {
   margin: 1rem 0 0;
   padding: 0 0 0 1rem;
   border-left: 1px solid var(--ink);
-  overflow-x: auto;
+  overflow: hidden;
   font-family: var(--data);
   font-size: 0.85rem;
   font-weight: 400;
   line-height: 1.45;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
   tab-size: 4;
 }
 
@@ -404,6 +405,64 @@ main section details:not([open]) > summary:focus-visible h2::before {
 
 .essay pre code {
   font-size: inherit;
+}
+
+/* A source line is one row. Its number stays on the first row, so a wrap
+   makes that row taller and the next number starts further down.
+   Nothing in the block slides sideways. */
+.essay pre:has(> code.lined) {
+  padding-left: 0.45rem;
+}
+
+.essay pre code.lined {
+  display: block;
+  white-space: normal;
+  counter-reset: ln;
+}
+
+.essay pre code.lined .nl {
+  display: block;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  white-space: pre;
+  font-size: 0;
+  line-height: 0;
+}
+
+.essay pre code.lined .line {
+  display: block;
+  position: relative;
+  padding-left: calc(var(--line-digits, 2) * 1ch + 0.7rem);
+  min-height: 1.45em;
+  min-height: 1lh;
+}
+
+.essay pre code.lined .line::before {
+  content: counter(ln);
+  content: counter(ln) / "";
+  counter-increment: ln;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(var(--line-digits, 2) * 1ch);
+  text-align: right;
+  white-space: nowrap;
+  user-select: none;
+  color: var(--code-label);
+}
+
+.essay pre code.lined .src {
+  display: block;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 660px) {
+  .essay pre {
+    font-size: 0.78rem;
+  }
 }
 
 .essay hr {
@@ -664,6 +723,10 @@ html[data-theme="dark"] .theme button[data-theme-set="dark"] {
 
   main section details > summary {
     margin-bottom: 1.05rem;
+  }
+
+  .essay pre {
+    overflow: visible;
   }
 
   a {
