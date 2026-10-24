@@ -148,6 +148,38 @@ There are no lines through $p$ that are parallel to $L$: every line meets $L$.
 
 A line on a sphere is a great circle, a circle whose center is the center of the sphere. Any two great circles meet. A triangle's angles add to more than $\pi$.
 
+# Three sizes of infinite space
+
+An infinite set can be a small one. The [unit vectors](vectors.html#unit-vectors) are infinite, and every one of them has length 1. Length is the straight-line distance from the origin to the tip. The set is bounded and closed. Bounded means there is a farthest reach. Closed means that farthest reach belongs to the set. The points sit on a circle. The non-unit vectors are infinite too, and the length can be any positive number, so the set is unbounded: past any reach there is a farther vector.
+
+These three geometries are that same comparison, in three sizes. The size is the amount of room. Room is the area inside a circle of walked radius $r$, the distance you walk along the surface from the center of the circle. Area is the amount of surface inside that walk.
+
+**Spherical space** is the small infinity, the unit-vector case. The whole surface is bounded and closed. Curvature is a number that says how the surface bends. Positive curvature bends together, the way a ball does. On the sphere of curvature $+1$, the walked radius runs from $0$ out to $\pi$, and there you are at the opposite point. The area inside the circle is
+
+$$2\pi(1-\cos r)$$
+
+and the length of the rim is $2\pi\sin r$. Both grow and then come back down. At $r=\pi$ the circle has covered the whole sphere, and the area of that sphere is $4\pi$. Infinitely many points, and a finite amount of room.
+
+**Euclidean space** is the middle infinity. Curvature $0$ is flat. There is no farthest point. The area inside a circle of radius $r$ is
+
+$$\pi r^2$$
+
+and the rim is $2\pi r$. Letting $r$ grow with no cap makes the area infinite, and the growth is the square of the distance. The set of lines through $p$ that miss $L$ has one member.
+
+**Hyperbolic space** is the large infinity. Curvature $-1$ flares, the way a saddle does, so a circle spreads faster than the same circle on the flat plane. The area inside a circle of radius $r$ is
+
+$$2\pi(\cosh r-1)$$
+
+and the rim is $2\pi\sinh r$. The hyperbolic cosine and the hyperbolic sine are the flared versions of cosine and sine:
+
+$$\cosh r=\frac{e^{r}+e^{-r}}{2}$$
+
+$$\sinh r=\frac{e^{r}-e^{-r}}{2}$$
+
+$e$ is about 2.718. For a large radius the area is close to $\pi e^{r}$. Each step outward multiplies the new room. The flat circle grows by squaring the radius. The lines through $p$ that miss $L$ are an infinite set, one line for each direction between the two edge directions that graze $L$ and do not meet it.
+
+The angle sums above are this same room. On the unit sphere a triangle's angles add to more than $\pi$, and the surplus, the amount past $\pi$, equals that triangle's area. On the flat plane the angles add to $\pi$. On the hyperbolic plane the angles add to less than $\pi$, and the missing amount equals that triangle's area. More room in the space leaves less angle inside the triangle.
+
 Next: [Signals](signals.html).</textarea>
     </article>
   </main>
