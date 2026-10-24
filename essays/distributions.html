@@ -43,6 +43,10 @@ Let's explain the temperature scaling formula for softmax probabilities
 
 The formula qi = exp(zi/T) / sum(exp(zj/T)) represents temperature-scaled softmax, where:
 
+$$q_i=\frac{\exp(z_i/T)}{\sum_j\exp(z_j/T)}$$
+
+$\exp$ means $e$ raised to that power, and $e$ is about 2.718. $z_i$ is the raw score for class $i$, before the scores are turned into shares that add to 1. Dividing the scores by $T$ before the exponential is the temperature. A low temperature makes the biggest score take almost the whole share. A high temperature spreads the share across the classes.
+
 - qi is the output probability for class i
 
 - zi is the logit (pre-softmax activation) for class i
@@ -74,31 +78,460 @@ Denominator sum(exp(zj/T)) = 62.9872
 Final probability qi = 0.8668
 ```
 
+## By hand: softmax
+
+@ alan yeh. ai by hand
+
+[https://aibyhand.substack.com/](https://aibyhand.substack.com/)
+
+```python
+e = 3
+e**1/30
+```
+
+```
+0.1
+```
+
+The power runs before the division, so this line is $(3^1)/30=0.1$. The comment on `sm` sets $e=3$ in place of $2.71828$.
+
+[https://aibyhand.substack.com/p/w11-softmax](https://aibyhand.substack.com/p/w11-softmax)
+
+```python
+def sm(x):
+    e = 3 # 2.71828
+    x = np.power(e, x)
+    return x/np.sum(x)
+```
+
+```python
+sm([6,5.9])
+```
+
+```
+array([0.52743772, 0.47256228])
+```
+
+```python
+# ex1
+sm(L(M([1,1,-1],[1,-1,-1]), M([2],[1])))
+```
+
+```
+array([[0.9],
+       [0.1]])
+```
+
+```python
+# ex2
+sm(L(M([1,1,0],[1,-1,0]), M([2],[1])))
+```
+
+```
+array([[0.9],
+       [0.1]])
+```
+
+```python
+# ex3
+sm(L(M([1,1,1],[1,-1,1]), M([2],[1])))
+```
+
+```
+array([[0.9],
+       [0.1]])
+```
+
+```python
+sm(L(M([1,1,2],[1,-1,2]), M([2],[1])))
+```
+
+```
+array([[0.9],
+       [0.1]])
+```
+
+```python
+sm(L(M([1,1,3],[1,-1,3]), M([2],[1])))
+```
+
+```
+array([[0.9],
+       [0.1]])
+```
+
+```python
+sm(L(M([1,1,3],[1,-1,5]), M([2],[1])))
+```
+
+```
+array([[0.5],
+       [0.5]])
+```
+
+```python
+sm(L(M([1,1,2],[1,-1,4]), M([2],[1])))
+```
+
+```
+array([[0.5],
+       [0.5]])
+```
+
+```python
+sm(L(M([1,1,0],[1,-1,2]), M([2],[1])))
+```
+
+```
+array([[0.5],
+       [0.5]])
+```
+
+```python
+sm(L(M([1,1,0],[1,-1,1]), M([2],[1])))
+```
+
+```
+array([[0.75],
+       [0.25]])
+```
+
+```python
+sm(L(M([1,1,-1],[1,-1,-1],[1,0,-2],[0,1,1]), M([2],[1])))
+```
+
+```
+array([[0.45],
+       [0.05],
+       [0.05],
+       [0.45]])
+```
+
+```python
+sm(L(M([1,1,-1],[1,-1,3],[1,0,0],[0,1,-1]), M([2],[1])))
+```
+
+```
+array([[0.09],
+       [0.81],
+       [0.09],
+       [0.01]])
+```
+
+```python
+sm(L(M([1,1,-3],[1,-1,0],[1,0,0],[0,1,2],[1,2,-4],[2,1,-3]), M([2],[1])))
+```
+
+```
+array([[0.02],
+       [0.06],
+       [0.18],
+       [0.54],
+       [0.02],
+       [0.18]])
+```
+
+
 temperatures 0.1, 0.5, 1.0, 2.0, 5.0
+
+```python
+# Define some example logits (pre-softmax values)
+logits = np.array([2.0, 1.0, 0.0, -1.0, -2.0])
+
+# Define different temperature values to test
+temperatures = [0.1, 0.5, 1.0, 2.0, 5.0]
+
+# Create a figure with subplots
+plt.figure(figsize=(15, 5))
+
+# Plot probability distributions for each temperature
+for i, temp in enumerate(temperatures, 1):
+    plt.subplot(1, len(temperatures), i)
+    
+    # Apply temperature scaling and softmax
+    scaled_logits = logits / temp
+    probs = np.exp(scaled_logits) / np.sum(np.exp(scaled_logits))
+    
+    # Create bar plot
+    plt.bar(range(len(logits)), probs)
+    plt.title(f'Temperature = {temp}')
+    plt.ylim(0, 1)
+    plt.xlabel('Class')
+    plt.ylabel('Probability')
+
+plt.tight_layout()
+plt.show()
+```
 
 ![temperatures 0.1, 0.5, 1.0, 2.0, 5.0](../journal/distributions/001-0.png)
 
 temperatures 0.1, 0.25, 0.5, 0.75, 1.0
 
+```python
+# Define some example logits (pre-softmax values)
+logits = np.array([2.0, 1.0, 0.0, -1.0, -2.0])
+
+# Define different temperature values to test (between 0 and 1)
+temperatures = [0.1, 0.25, 0.5, 0.75, 1.0]
+
+# Create a figure with subplots
+plt.figure(figsize=(15, 5))
+
+# Plot probability distributions for each temperature
+for i, temp in enumerate(temperatures, 1):
+    plt.subplot(1, len(temperatures), i)
+    
+    # Apply temperature scaling and softmax
+    scaled_logits = logits / temp
+    probs = np.exp(scaled_logits) / np.sum(np.exp(scaled_logits))
+    
+    # Create bar plot
+    plt.bar(range(len(logits)), probs)
+    plt.title(f'Temperature = {temp}')
+    plt.ylim(0, 1)
+    plt.xlabel('Class')
+    plt.ylabel('Probability')
+
+plt.tight_layout()
+plt.show()
+```
+
 ![temperatures 0.1, 0.25, 0.5, 0.75, 1.0](../journal/distributions/003-0.png)
 
 Effect of Temperature on Token Selection Probabilities (Approaching T=0)
+
+```python
+# Create a concrete example of transformer token selection with temperature=0
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Sample logits for next token prediction (pre-softmax scores)
+# Let's simulate scores for 5 candidate tokens
+tokens = ['cat', 'dog', 'bird', 'fish', 'rabbit']
+logits = np.array([2.5, 1.8, 0.9, 0.4, 0.2])
+
+# Create figure with 5 subplots showing probability distribution at different temperatures
+fig, axes = plt.subplots(1, 5, figsize=(15, 5))
+temperatures = [1.0, 0.5, 0.2, 0.1, 0.01]
+
+for i, temp in enumerate(temperatures):
+    # Apply temperature scaling and softmax
+    scaled_logits = logits / temp
+    probs = np.exp(scaled_logits) / np.sum(np.exp(scaled_logits))
+    
+    # Plot probabilities as bars
+    axes[i].bar(tokens, probs)
+    axes[i].set_title(f'T = {temp}')
+    axes[i].set_ylim(0, 1)
+    axes[i].tick_params(axis='x', rotation=45)
+    
+    # Annotate probabilities
+    for j, prob in enumerate(probs):
+        axes[i].text(j, prob + 0.02, f'{prob:.2f}', ha='center')
+
+plt.suptitle('Effect of Temperature on Token Selection Probabilities\n(Approaching T=0)')
+plt.tight_layout()
+plt.show()
+
+# Print analysis of what happens as T approaches 0
+print("\nAs temperature approaches 0:")
+print("- The highest scoring token ('cat') gets increasingly dominant")
+print("- Other token probabilities approach 0")
+print("- At T=0.01, selection becomes nearly deterministic")
+print(f"- Probability of 'cat' at T=0.01: {probs[0]:.4f}")
+```
 
 ![Effect of Temperature on Token Selection Probabilities (Approaching T=0)](../journal/distributions/008-0.png)
 
 Zipf
 
+Zipf's law says the frequency of the item at rank $k$ is proportional to $1/k$:
+
+$$f(k)\propto\frac{1}{k}$$
+
+Proportional means one quantity is a constant times the other. The most common item is about twice the second and about three times the third. On a log-log plot both axes are logarithmic, equal steps meaning equal multiplications, and $1/k$ is a straight line. The token plots below are this same shape, with some wobble added. A token is one piece of text being scored, often a word or a piece of a word. A distribution is a list of shares across outcomes. Temperature and Zipf are two readings of how uneven that list is.
+
+```python
+# Example of Zipf's Law for word frequencies
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Generate ranks from 1 to 1000
+ranks = np.arange(1, 1001)
+
+# Calculate frequencies using Zipf's Law: frequency ∝ 1/rank
+frequencies = 1/ranks
+
+# Create the plot
+plt.figure(figsize=(10, 6))
+plt.loglog(ranks, frequencies, 'b-', label="Zipf's Law")
+plt.grid(True)
+
+plt.title("Zipf's Law: Word Frequency vs Rank")
+plt.xlabel('Word Rank (log scale)')
+plt.ylabel('Relative Frequency (log scale)')
+plt.legend()
+
+# Add text annotation explaining Zipf's Law
+plt.text(0.95, 0.95, 
+         "Zipf's Law states that the frequency of any word\n" +
+         "is inversely proportional to its rank in the\n" +
+         "frequency table", 
+         transform=plt.gca().transAxes,
+         verticalalignment='top',
+         horizontalalignment='right',
+         bbox=dict(facecolor='white', alpha=0.8))
+
+plt.tight_layout()
+plt.show()
+```
+
 ![Zipf](../journal/distributions/004-0.png)
 
 Frequency Distribution of Subword Tokens
+
+```python
+# Example of subword tokenization frequency distribution
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Sample text for tokenization (you may want to use your actual tokenized data)
+text = "The quick brown fox jumps over the lazy dog. This is a sample text to demonstrate subword tokenization."
+
+# Simulate subword token frequencies (replace this with actual tokenizer output)
+# This is a simplified example - actual subword distributions may vary
+n_tokens = 100
+# Generate frequencies that follow roughly Zipfian distribution but with some variation
+frequencies = np.random.pareto(1, n_tokens) 
+frequencies = frequencies / frequencies.sum()  # Normalize
+
+# Sort frequencies in descending order
+frequencies = np.sort(frequencies)[::-1]
+ranks = np.arange(1, len(frequencies) + 1)
+
+# Create the plot
+plt.figure(figsize=(10, 6))
+plt.loglog(ranks, frequencies, 'r-', label='Subword tokens')
+plt.grid(True)
+
+plt.title('Frequency Distribution of Subword Tokens')
+plt.xlabel('Token Rank (log scale)')
+plt.ylabel('Relative Frequency (log scale)')
+plt.legend()
+
+# Add text annotation
+plt.text(0.95, 0.95, 
+         "Subword tokenization often results in a\n" +
+         "distribution similar to Zipf's Law, but with\n" +
+         "some characteristic differences due to the\n" +
+         "nature of subword splitting",
+         transform=plt.gca().transAxes,
+         verticalalignment='top',
+         horizontalalignment='right',
+         bbox=dict(facecolor='white', alpha=0.8))
+
+plt.tight_layout()
+plt.show()
+```
 
 ![Frequency Distribution of Subword Tokens](../journal/distributions/005-0.png)
 
 Token Probability Distribution in Transformer Output
 
+```python
+# Analyzing token distribution in response to natural language prompts
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Simulate token probabilities from a transformer's output distribution
+# This represents the probability distribution over the vocabulary after processing a prompt
+n_tokens = 1000
+# Generate a more peaked distribution typical of transformer outputs
+# Using modified softmax-like distribution
+x = np.linspace(0, 10, n_tokens)
+logits = np.exp(-x/2) + 0.1*np.random.random(n_tokens)
+probabilities = logits / logits.sum()
+
+# Sort probabilities in descending order
+probabilities = np.sort(probabilities)[::-1]
+ranks = np.arange(1, len(probabilities) + 1)
+
+# Create the plot
+plt.figure(figsize=(10, 6))
+plt.loglog(ranks, probabilities, 'b-', label='Token probabilities')
+plt.grid(True)
+
+plt.title('Token Probability Distribution in Transformer Output')
+plt.xlabel('Token Rank (log scale)')
+plt.ylabel('Probability (log scale)')
+plt.legend()
+
+# Add text annotation explaining the distribution
+plt.text(0.95, 0.95,
+         "Transformer output distributions tend to be:\n" +
+         "• More peaked than Zipfian\n" +
+         "• Concentrated on contextually relevant tokens\n" +
+         "• Influenced by attention patterns\n" +
+         "• Temperature-dependent in sampling",
+         transform=plt.gca().transAxes,
+         verticalalignment='top',
+         horizontalalignment='right',
+         bbox=dict(facecolor='white', alpha=0.8))
+
+plt.tight_layout()
+plt.show()
+```
+
 ![Token Probability Distribution in Transformer Output](../journal/distributions/006-0.png)
 
 Token Probability Distribution with Temperature=0
+
+```python
+# Analyzing token distribution with temperature=0 (deterministic/greedy sampling)
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Simulate token probabilities with temperature=0
+# This will create a much more peaked distribution where probability mass concentrates on top tokens
+n_tokens = 1000
+x = np.linspace(0, 10, n_tokens)
+logits = np.exp(-x/2) + 0.1*np.random.random(n_tokens)
+
+# Apply temperature=0 effect (approaches one-hot)
+# We'll simulate this by heavily concentrating probability mass on top tokens
+temperature = 0.01  # Very close to 0 (avoiding division by 0)
+logits = logits/temperature
+probabilities = np.exp(logits) / np.sum(np.exp(logits))
+
+# Sort probabilities in descending order
+probabilities = np.sort(probabilities)[::-1]
+ranks = np.arange(1, len(probabilities) + 1)
+
+# Create the plot
+plt.figure(figsize=(10, 6))
+plt.loglog(ranks, probabilities, 'r-', label='Token probabilities (T=0)')
+plt.grid(True)
+
+plt.title('Token Probability Distribution with Temperature=0')
+plt.xlabel('Token Rank (log scale)')
+plt.ylabel('Probability (log scale)')
+plt.legend()
+
+# Add text annotation explaining the effect of temperature=0
+plt.text(0.95, 0.95,
+         "Temperature=0 characteristics:\n" +
+         "• Approaches deterministic selection\n" +
+         "• Highest probability token dominates\n" +
+         "• Very steep probability drop-off\n" +
+         "• Used for maximum likelihood sampling",
+         transform=plt.gca().transAxes,
+         verticalalignment='top',
+         horizontalalignment='right',
+         bbox=dict(facecolor='white', alpha=0.8))
+
+plt.tight_layout()
+plt.show()
+```
 
 ![Token Probability Distribution with Temperature=0](../journal/distributions/007-0.png)</textarea>
     </article>

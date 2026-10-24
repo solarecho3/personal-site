@@ -45,7 +45,90 @@
 
 Through any point $p$ not on the line $L$ there exists precisely one line $P$ that is parallel to $L$, and the angle sum of a triangle is $\pi$.
 
+$\pi$ radians is a half turn, 180 degrees. A radian is the angle that marks off an arc as long as the radius. On a flat plane the three angles inside a triangle add to that half turn. The picture computes the slope of the base, the rise over the run:
+
+$$m=\frac{y_2-y_1}{x_2-x_1}$$
+
+A parallel line through $p$ uses that same slope, so it stays a constant distance from $L$.
+
 calculate the slope of the triangle's base line segment
+
+```python
+triangle_vertices = np.array([
+    [0,2],
+    [1,0],
+    [-2,-1]
+])
+triangle = Polygon(
+    triangle_vertices,
+    facecolor="lightgrey",
+    edgecolor="black"
+)
+
+# calculate the slope of the triangle's base line segment
+# eq: m = (y2 - y1)/(x2 - x1)
+x1,y1 = ( 1, 0)
+x2,y2 = (-2,-1)
+x3,y3 = ( 0, 2)
+m = (y2 - y1) / (x2 - x1)
+print(f"m({m})\np1{x1,y1}\np2{x2,y2}")
+
+# extend the line to a point left 
+# t distance units from p(x1,y1)
+d = 4
+x4 = x1 - d
+y4 = y1 - (m*d)
+print(f"p3{x4,y4}")
+
+# extend the line to a point right 
+# t distance units from p(x2,y2)
+d = 4
+x5 = x2 + d
+y5 = y2 + (m*d)
+print(f"p4{x5,y5}")
+
+# calculate the parallel line
+# from the third vertex and the
+# slope of the base
+d = 3.5
+x6 = x3 - d
+y6 = y3 - (m*d)
+d = 1.5
+x7 = x3 + d
+y7 = y3 + (m*d)
+print(f"p5{x6,y6}")
+print(f"p6{x7,y7}")
+
+# 
+angles = [
+    Wedge((x2,y2), 0.5, 19, 55, width=0.1, color="black"),
+    Wedge((x3,y3), 0.5, -158, -123, width=0.1, color="black"),
+    Wedge((x3,y3), 0.5, -123, -65, width=0.01, color="black"),
+    Wedge((x3,y3), 0.4, -123, -65, width=0.01, color="black"),
+    Wedge((x3,y3), 0.5, -65, 15, width=0.01, color="black"),
+    Wedge((x3,y3), 0.4, -65, 15, width=0.01, color="black"),
+    Wedge((x3,y3), 0.3, -65, 15, width=0.01, color="black"),
+    Wedge((x1,y1), 0.5, 120, 195, width=0.01, color="black"),
+    Wedge((x1,y1), 0.4, 120, 195, width=0.01, color="black"),
+    Wedge((x1,y1), 0.3, 120, 195, width=0.01, color="black")
+]
+
+fig, ax = plt.subplots(figsize=[6,6])
+ax.axis([-4.5, 3, -4, 4])
+ax.add_patch(triangle)
+for angle in angles:
+    ax.add_patch(angle)
+ax.plot(x1, y1, "o", color="steelblue")
+ax.plot(x2, y2, "o", color="steelblue")
+ax.plot(x3, y3, "o", color="steelblue")
+ax.plot((x4,x5), (y4,y5), color="black")
+ax.plot((x6,x7), (y6,y7), color="black")
+ax.annotate("L", (x5+.1,y5+.05))
+ax.annotate("P", (x7+.1,y7+.05))
+ax.annotate("p", (x3,y3+.2))
+plt.grid()
+plt.show()
+```
 
 ![calculate the slope of the triangle's base line segment](../journal/geometry/002-0.png)
 
@@ -56,10 +139,14 @@ calculate the slope of the triangle's base line segment
 ### Hyperbolic Axiom
 There are at least two parallel lines through $p$ that do not meet $L$.
 
+On this surface a triangle's angles add to less than $\pi$.
+
 ## Spherical Geometry
 
 ### Spherical Axiom
 There are no lines through $p$ that are parallel to $L$: every line meets $L$.
+
+A line on a sphere is a great circle, a circle whose center is the center of the sphere. Any two great circles meet. A triangle's angles add to more than $\pi$.
 
 Next: [Signals](signals.html).</textarea>
     </article>

@@ -7,6 +7,7 @@
   <title>Computer Thinking · Adam Smith</title>
   <link rel="icon" href="../favicon.svg">
   <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
 </head>
 <body>
   <header>
@@ -196,11 +197,19 @@ class SIGMOID_NEURON:
                 0.9999546021312976
                 """
                 return 1 / (1 + (math.exp(-1*x)))
-```</textarea>
+```
+
+The sigmoid line above, with the grouping written out, is
+
+$$\sigma(x)=\frac{1}{1+e^{-x}}$$
+
+$e$ is about 2.718. The same curve is plotted in [Calculus](calculus.html) and used as the hidden step in [Neural nets](neural-nets.html).
+</textarea>
     </article>
   </main>
   <noscript><p>Enable JavaScript to read this journal entry.</p></noscript>
   <script src="../theme.js"></script>
-  <script src="../essay.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+  <script defer src="../essay.js"></script>
 </body>
 </html>

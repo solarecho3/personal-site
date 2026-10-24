@@ -77,6 +77,145 @@ column vector
 
 ## Adding Vectors
 
+```python
+# %matplotlib ipympl
+import math
+import scipy
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from IPython.display import display
+
+def pvec2(*vectors, title='', **kwargs):
+    """
+    Plot `n` 2-dimensional vectors.
+    All vectors begin at standard origin (0,0).
+    
+    Parameters
+    ----------
+    *vectors : numpy.array
+        Any number numpy arrays representing 2D vectors.
+
+    Examples
+    --------
+    &gt;&gt;&gt;v = np.array([0,1])
+    &gt;&gt;&gt;w = np.array([-1,2])
+    &gt;&gt;&gt;pvec2(v,w, title='two vectors')
+    """
+    plt.close()
+    plt.figure(figsize=[6,6])
+    
+    # add the zero vector to the 
+    # *args tuple for x/y limits
+    vectors = (*vectors, np.array([0,0]))
+
+    # find min/max x and y vals
+    # and set the x and y limits
+    Xs = [i[0] for i in vectors]
+    Ys = [i[1] for i in vectors]
+    plt.xlim(min(Xs)-1, max(Xs)+1)
+    plt.ylim(min(Ys)-1, max(Ys)+1)
+
+    for vector in vectors:
+        plt.quiver(0,0,vector[0],vector[1],angles='xy',scale_units='xy',scale=1)
+        plt.annotate(f"({vector[0]},{vector[1]})", xy=vector, xytext=(1, 3), textcoords="offset points")
+    
+    plt.grid()
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title(title)
+    return plt
+
+def addvec2(vectors, title=''):
+    """    
+    Plot vector addition for n tuples of vectors.
+    All augends begin at the standard origin (0,0).
+
+    Parameters
+    ----------
+    vectors : numpy.array[tuples]
+        A numpy array of numpy arrays to add. Displays as vector addition,
+        where the origin of vector y is the tail of vector v, and the head
+        is the head of vector w if y = v + w.
+
+    Examples
+    --------
+
+    &gt;&gt;&gt;v = np.array([0,2])
+    &gt;&gt;&gt;w = np.array([-1,1])
+    &gt;&gt;&gt;a = np.array([-4,-2])
+    &gt;&gt;&gt;b = np.array([3,1])
+    &gt;&gt;&gt;y = np.array([[v,w],[a,b]])
+    &gt;&gt;&gt;addvec2(y)
+    """
+    plt.close()
+    plt.figure(figsize=[6,6])
+    
+    xmin, xmax = 0, 0
+    ymin, ymax = 0, 0
+
+    for vector in vectors:
+
+        vecsum = vector[0] + vector[1]
+        
+        plt.quiver(0,0,vector[0][0],vector[0][1], angles='xy', scale_units='xy', scale=1)
+        plt.annotate(f"({vector[0][0]},{vector[0][1]})", xy=vector[0], xytext=(1, 3), textcoords="offset points")
+
+        plt.quiver(vector[0][0],vector[0][1],vector[1][0],vector[1][1], angles='xy', scale_units='xy', scale=1)
+        plt.annotate(f"({vector[1][0]},{vector[1][1]})", xy=vector[0]+vector[1], xytext=(1, 3), textcoords="offset points")
+
+        plt.quiver(0,0,vecsum[0], vecsum[1], angles='xy', scale_units='xy', scale=1)
+        plt.annotate(f"({vecsum[0]},{vecsum[1]})", xy=vecsum/2, xytext=(1, 3), textcoords="offset points")
+
+        m = (vector[0][0], vector[1][0], 0, vecsum[0])
+        if min(m) &lt; xmin:
+            xmin = min(m)
+
+        if max(m) &gt; xmax:
+            xmax = max(m)
+
+        m = (vector[0][1], vector[1][1], 0, vecsum[1])
+        if min(m) &lt; ymin:
+            ymin = min(m)
+
+        if max(m) &gt; ymax:
+            ymax = max(m)
+
+    plt.xlim(xmin-1,xmax+1)
+    plt.ylim(ymin-1,ymax+1)
+
+    plt.grid()
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title(title)
+
+def pvec3(*vectors, title=''):
+
+    plt.close()
+    ax = plt.figure(figsize=(6, 6)).add_subplot(projection='3d')
+
+    vectors = (*vectors, np.array([0,0,0]))
+
+    Xs = [i[0] for i in vectors]
+    Ys = [i[1] for i in vectors]
+    Zs = [i[2] for i in vectors]
+    ax.set_xlim(min(Xs)-1, max(Xs)+1)
+    ax.set_ylim(min(Ys)-1, max(Ys)+1)
+    ax.set_zlim(min(Zs)-1, max(Zs)+1)
+
+    for vector in vectors:
+        ax.quiver(0,0,0,vector[0],vector[1],vector[2])
+        ax.text(vector[0],vector[1],vector[2], f'({vector[0]},{vector[1]},{vector[2]})')
+
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_zlabel("z")
+    plt.title(title)
+    plt.tight_layout()
+    plt.grid()
+    return plt
+```
+
 add two row vectors
 
 ```
@@ -85,6 +224,13 @@ array([[5, 7, 9]])
 ```
 
 Vector addition: [2 3] + [2 1]
+
+```python
+# Define the vector 'a'
+a = np.array([2, 3])
+b = np.array([2, 1])
+addvec2(np.array([[a,b]]), title="Vector addition: [2 3] + [2 1]")
+```
 
 ![Vector addition: 2 3 + 2 1](../journal/vectors/007-0.png)
 
@@ -97,6 +243,32 @@ In vector addition, the added vector starts at the head of the base vector. The 
 In vector subtraction, the subtracted, or 'negative' vector, starts at the tail of the other vector. The resultant is the vector from the head of the subtracted, or negative, or subtrahend, vector to the head of the minuend vector.
 
 Vector subtraction: [2 3] - [2 1]
+
+```python
+# Define the vector 'a'
+a = np.array([2, 3])
+b = np.array([2, 1])
+
+# Create a plot of the vector 'a'
+plt.close()
+plt.figure(figsize=(6, 6))
+plt.quiver(0, 0, a[0], a[1], angles='xy', scale_units='xy', scale=1)
+plt.quiver(0, 0, b[0], b[1], angles='xy', scale_units='xy', scale=1)
+plt.quiver(b[0], b[1], a[0]-b[0], a[1]-b[1], angles='xy', scale_units='xy', scale=1)
+
+# Annotate the vector
+plt.annotate(f"a = ({a[0]}, {a[1]})", xy=(a[0], a[1]), xytext=(5, 5), textcoords="offset points", ha="center")
+plt.annotate(f"b = ({b[0]}, {b[1]})", xy=(b[0]+.5, b[1]+.1), ha="center")
+plt.annotate("a-b=(0, 2)", xy=(2.5,2), ha="center")
+
+plt.xlabel("X-axis")
+plt.ylabel("Y-axis")
+plt.title("Vector subtraction: [2 3] - [2 1]")
+plt.xlim(-1, max(abs(a))+1)
+plt.ylim(-1, max(abs(a))+1)
+plt.grid()
+plt.show()
+```
 
 ![Vector subtraction: 2 3 - 2 1](../journal/vectors/009-0.png)
 
@@ -115,6 +287,35 @@ print("(", a, "+", b, ") * 1/N vectors")
 array([2., 2.])
 ```
 
+## By hand: averaging
+
+[https://aibyhand.substack.com/p/w6-batch](https://aibyhand.substack.com/p/w6-batch)
+
+```python
+(2+2+2+6)/4
+```
+
+```
+3.0
+```
+
+```python
+(1+1+1+1+1+1+1)/10
+```
+
+```
+0.7
+```
+
+```python
+np.mean([1,1,0,1,1,1,1,1,0,1])
+```
+
+```
+0.8
+```
+
+
 ## Multiplying Vectors
 
 ```python
@@ -131,6 +332,28 @@ array([4, 3])
 Matrices have **(row,column)** indices. Transposition swaps those indices.
 
 $\mathbf{m}^T_{i,j}=\mathbf{m}_{j,i}$
+
+## By hand: row and column
+
+@ alan yeh. ai by hand
+
+[https://aibyhand.substack.com/](https://aibyhand.substack.com/)
+
+```python
+def m(*x):
+    return np.array([[*x]])
+
+def M(*x):
+    return np.array([*x])
+
+m(5,2).T!=m(5,2)
+```
+
+```
+array([[False,  True],
+       [ True, False]])
+```
+
 
 ## Vector Dimensionality
 
@@ -174,6 +397,24 @@ Dimensions: 6
 Magnitude: 9.539392014169456
 Magnitude: 9.539392014169456
 ```
+
+Euclidean distance is the straight-line distance between two points. In the plane, from $(x_1,y_1)$ to $(x_2,y_2)$,
+
+$$d=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}$$
+
+That expression is the Pythagorean theorem. A right triangle has one square corner. The hypotenuse is the side across from that corner. If the other two sides, the legs, have lengths $a$ and $b$, then
+
+$$c^2=a^2+b^2$$
+
+so the hypotenuse is
+
+$$c=\sqrt{a^2+b^2}$$
+
+Each squared term in the distance is one leg: the horizontal step and the vertical step. The square root of their sum is the straight line. The magnitude of a vector is that same distance measured from the origin, the point $(0,0)$, where the tail sits. In $n$ dimensions the same idea stacks one squared step per axis:
+
+$$\lVert\mathbf{v}\rVert=\sqrt{v_1^2+v_2^2+\cdots+v_n^2}$$
+
+A worked 3-4-5 triangle is under [The Dot Product and Vector Magnitude](#the-dot-product-and-vector-magnitude).
 
 ## Unit Vectors
 
@@ -364,6 +605,16 @@ $$\cos(\theta_v,_w)=\frac{\mathbf{v}^\top\mathbf{w}}{\lVert\mathbf{v}\rVert\,\lV
 
 The product of the magnitude of the two vectors, scaled by the cosine of the angle between them.
 
+Cosine similarity is that cosine, the fraction already written above:
+
+$$\frac{\mathbf{x}^\top\mathbf{y}}{\lVert\mathbf{x}\rVert\,\lVert\mathbf{y}\rVert}$$
+
+Cosine distance is one minus that fraction:
+
+$$1-\frac{\mathbf{x}^\top\mathbf{y}}{\lVert\mathbf{x}\rVert\,\lVert\mathbf{y}\rVert}$$
+
+The pairs of numbers below are those two quantities for each pair of vectors.
+
 the spatial cosine similarity
 
 the spatial cosine distance
@@ -396,6 +647,12 @@ scalar projection from the angle theta
 
 the length of the projection of vector a onto vector b
 
+The scalar projection is that length as a single number. If $\theta$ is the angle between $\mathbf{a}$ and $\mathbf{b}$, the length of the shadow of $\mathbf{a}$ cast onto $\mathbf{b}$ is
+
+$$\lVert\mathbf{a}\rVert\cos\theta=\frac{\mathbf{a}^\top\mathbf{b}}{\lVert\mathbf{b}\rVert}$$
+
+The orthogonal projection section below solves for the scalar $\beta$ that places the shadow of $\mathbf{b}$ onto $\mathbf{a}$. That shadow vector is $\beta$ times $\mathbf{a}$, and $\beta$ times the length of $\mathbf{a}$ is this same kind of length.
+
 ```
 Scalar projection a -&gt; b: 1.884233417193793
 ```
@@ -408,9 +665,23 @@ Scalar projection a -&gt; b: 1.884233417193793
 
 Perpendicular vectors
 
+```python
+# TODO: move to 'Orthogonal Vectors Have a Zero Dot Product'
+# if the dot product is 0
+# the vectors are perpendicular
+pvec2([4,2],[-1,2],title='Perpendicular vectors')
+np.dot([4,2],[-1,2])
+```
+
 ![Perpendicular vectors](../journal/vectors/041-0.png)
 
 Not perpendicular
+
+```python
+# TODO: move to 'Orthogonal Vectors Have a Zero Dot Product'
+pvec2([1,2],[3,1], title='Not perpendicular')
+np.dot([1,2],[3,1])
+```
 
 ![Not perpendicular](../journal/vectors/042-0.png)
 
@@ -469,6 +740,33 @@ We want to project a point at the head of vector $\mathbf b$ onto vector $\mathb
 
 Vector
 
+```python
+# Define the vector 'a'
+a = np.array([2, 3])
+b = np.array([2, 1])
+beta = np.dot(a,b)/np.dot(a,a) # the orthogonal projection from the head of b, to a
+projected_beta = a*beta
+
+# Create a plot of the vector 'a'
+plt.close()
+plt.figure(figsize=(6, 6))
+plt.quiver(0, 0, a[0], a[1], angles='xy', scale_units='xy', scale=1)
+plt.quiver(0, 0, b[0], b[1], angles='xy', scale_units='xy', scale=1)
+plt.quiver(b[0], b[1], projected_beta[0]-b[0], projected_beta[1]-b[1], angles='xy', scale_units='xy', scale=1)
+
+# Annotate the vector
+plt.annotate(f"a = ({a[0]}, {a[1]})", xy=(a[0], a[1]), xytext=(5, 5), textcoords="offset points", ha="center")
+plt.annotate(f"b = ({b[0]}, {b[1]})", xy=(b[0]+.25, b[1]), xytext=(5, 5), textcoords="offset points", ha="center")
+
+plt.xlabel("X-axis")
+plt.ylabel("Y-axis")
+plt.title("Vector 'a', 'b', and the orthogonal projection vector")
+plt.xlim(-1, max(abs(a))+1)
+plt.ylim(-1, max(abs(a))+1)
+plt.grid()
+plt.show()
+```
+
 ![Vector](../journal/vectors/050-0.png)
 
 The dot product between orthogonal vectors is 0. And we know the projection from the head of $\mathbf b$ will create an orthogonal vector. 
@@ -517,6 +815,34 @@ $$\mathbf{t}=\mathbf{t\bot r}+\mathbf{t\parallel r}$$
 $$\mathbf{t\bot r}=\mathbf{t-t\parallel r}$$
 
 Vector Decomposition
+
+```python
+t = np.array([2.58,1.44])
+r = np.array([2.41,2.22])
+parallel_r = r*(np.dot(t.T, r))/(np.dot(r.T,r))
+perpendicular_r = t-parallel_r
+
+plt.close()
+plt.figure(figsize=(6, 6))
+plt.quiver(0, 0, t[0], t[1], angles='xy', scale_units='xy', scale=1)
+plt.quiver(0, 0, r[0], r[1], angles='xy', scale_units='xy', scale=1)
+plt.quiver(0, 0, parallel_r[0], parallel_r[1], angles='xy', scale_units='xy', scale=1)
+plt.quiver(0, 0, perpendicular_r[0], perpendicular_r[1], angles='xy', scale_units='xy', scale=1)
+
+plt.annotate(f"t = ({round(t[0],2)}, {round(t[1],2)})", xy=(t[0], t[1]), xytext=(5, 5), textcoords="offset points", ha="center")
+plt.annotate(f"r = ({round(r[0],2)}, {round(r[1],2)})", xy=(r[0], r[1]), xytext=(5, 5), textcoords="offset points", ha="center")
+
+plt.xlabel("X-axis")
+plt.ylabel("Y-axis")
+plt.title("Vector Decomposition")
+
+plt.xlim(-1.5, 3.5)
+plt.ylim(-1.5, 3.5)
+
+plt.tight_layout()
+plt.grid()
+plt.show()
+```
 
 ![Vector Decomposition](../journal/vectors/054-0.png)
 
@@ -590,6 +916,31 @@ $$V = \begin{Bmatrix}\begin{bmatrix}1\\ 3\end{bmatrix}\end{Bmatrix}$$
 
 A Vector (black) and the subspace it spans (gray)
 
+```python
+a = np.array([1,3])
+scaled_a = a*5
+negative_scaled_a = scaled_a * -1
+
+plt.close()
+plt.figure(figsize=(6, 6))
+plt.quiver(0, 0, a[0], a[1], angles='xy', scale_units='xy', scale=1)
+plt.quiver(0, 0, scaled_a[0], scaled_a[1], angles='xy', scale_units='xy', scale=1, color="grey", alpha=0.5)
+plt.quiver(0, 0, negative_scaled_a[0], negative_scaled_a[1], angles='xy', scale_units='xy', scale=1, color="grey", alpha=0.5)
+
+plt.annotate(f"a = ({round(a[0],2)}, {round(a[1],2)})", xy=a, xytext=(3, 3), textcoords="offset points", ha="center")
+
+plt.xlabel("X-axis")
+plt.ylabel("Y-axis")
+plt.title("A Vector (black) and the subspace it spans (gray)")
+
+plt.xlim(-1, 2)
+plt.ylim(-2, 5)
+
+plt.tight_layout()
+plt.grid()
+plt.show()
+```
+
 ![A Vector (black) and the subspace it spans (gray)](../journal/vectors/063-0.png)
 
 Now, a set of two vectors in $\mathbb{R}^3:$
@@ -598,21 +949,119 @@ $$V = \begin{Bmatrix}\begin{bmatrix}1\\0\\2\end{bmatrix},\begin{bmatrix}-1\\1\\2
 
 (FIX) Vectors in R^3 and the subspace they span
 
+```python
+# TODO: fix the graph the subspace plane
+a = np.array([1,0,2])
+b = np.array([-1,1,2])
+
+# no idea how to graph the 3d subspace, and this isn't correct
+X = np.linspace(a[0], b[0], 10)
+Y = np.linspace(a[1], b[1], 10)
+X,Y = np.meshgrid(X,Y)
+Z = X * a[0] + Y * a[1] + (a[2] - a[0]*b[0] - a[1]*b[1]) / b[2]
+
+plt.close()
+ax = plt.figure(figsize=(6, 6)).add_subplot(projection='3d')
+ax.quiver(0,0,0,a[0],a[1],a[2])
+ax.quiver(0,0,0,b[0],b[1],b[2])
+ax.plot_surface(X, Y, Z)
+
+plt.title("(FIX) Vectors in R^3 and the subspace they span")
+ax.set_xlim(-2,2)
+ax.set_ylim(-2,2)
+ax.set_zlim(-2,2)
+plt.tight_layout()
+plt.grid()
+plt.show()
+```
+
 ![(FIX) Vectors in R^3 and the subspace they span](../journal/vectors/065-0.png)
 
 Points along a random 2D vector subspace
+
+```python
+# randomized points along a 2D vector subspace
+# these points lie along a half-open interval [-4,4) of the vector subspace, based on the vector = [1 3]
+# there are an infinite number of potential points
+vector_set = np.array([1,3])
+random_scalars = np.random.uniform(-4,4,100)
+subspace_points_x = [scalar*vector_set[0] for scalar in random_scalars]
+subspace_points_y = [scalar*vector_set[1] for scalar in random_scalars]
+plt.close()
+plt.figure(figsize=[6,6])
+plt.scatter(subspace_points_x, subspace_points_y)
+plt.title('Points along a random 2D vector subspace')
+plt.xlim(-4,4)
+plt.ylim(-4,4)
+plt.grid()
+```
 
 ![Points along a random 2D vector subspace](../journal/vectors/066-0.png)
 
 Points along a random 3D vector subspace
 
+```python
+# randomized points along a 3D vector subspace
+# all the points lie along the same 3D plane when graphed
+# TODO: graph the plane
+vector_set_v1 = np.array([3,5,1])
+vector_set_v2 = np.array([0,2,2])
+
+random_scalars_1 = np.random.uniform(-4,4,100)
+random_scalars_2 = np.random.uniform(-4,4,100)
+
+plt.close()
+
+p1x, p1y, p1z = [],[],[]
+for scalar in random_scalars_1:
+    p1x.append(scalar*vector_set_v1[0])
+    p1y.append(scalar*vector_set_v1[1])
+    p1z.append(scalar*vector_set_v1[2])
+
+p2x, p2y, p2z = [],[],[]
+for scalar in random_scalars_2:
+    p1x.append(scalar*vector_set_v2[0])
+    p1y.append(scalar*vector_set_v2[1])
+    p1z.append(scalar*vector_set_v2[2])
+
+ax = plt.figure(figsize=(6, 6)).add_subplot(projection='3d')
+
+ax.scatter(p1x, p1y, p1z)
+ax.scatter(p2x, p2y, p2z)
+plt.title('Points along a random 3D vector subspace')
+plt.xlim(-4,4)
+plt.ylim(-4,4)
+ax.view_init(-20)
+plt.grid()
+```
+
 ![Points along a random 3D vector subspace](../journal/vectors/067-0.png)
 
 3 vectors that lie on a plane
 
+```python
+# TODO: Create pvec function for R^3 space
+
+# compute u+v+w and 2u+2v+w.
+# How do you know u,v,w lie in a plane?
+
+u = np.array([1,2,3])
+v = np.array([-3,1,-2])
+w = np.array([2,-3,-1])
+
+pvec3(u,v,w, title='3 vectors that lie on a plane')
+```
+
 ![3 vectors that lie on a plane](../journal/vectors/068-0.png)
 
 2 vectors that lie on a plane in R^3
+
+```python
+u = np.array([3,5,1])
+v = np.array([0,2,2])
+
+pvec3(u,v, title='2 vectors that lie on a plane in R^3')
+```
 
 ![2 vectors that lie on a plane in R^3](../journal/vectors/069-0.png)
 
@@ -635,6 +1084,32 @@ $$T=\begin{Bmatrix}\begin{bmatrix}3\\1\end{bmatrix},\begin{bmatrix}-3\\1\end{bma
 Now consider the following graph:
 
 The difference between basis sets
+
+```python
+basis = np.array([[3,1],[-3,1]])
+
+plt.close()
+plt.figure(figsize=(6, 6))
+plt.plot(-6, 2, marker='s', markersize=10)
+plt.plot(3, 1, marker='o', markersize=10)
+plt.plot([0,1],[0,0], linewidth=4, color='black')
+plt.plot([0,0],[1,0], linewidth=4, color='black')
+plt.plot([0,3],[0,1], linewidth=4, color='red', linestyle='dotted')
+plt.plot([0,-3],[0,1], linewidth=4, color='red', linestyle='dotted')
+
+# plt.annotate(f"a = ({round(a[0],2)}, {round(a[1],2)})", xy=a, xytext=(3, 3), textcoords="offset points"\
+
+plt.xlabel("X-axis")
+plt.ylabel("Y-axis")
+plt.title("The difference between basis sets")
+
+plt.xlim(-7,7)
+plt.ylim(-7,7)
+
+plt.tight_layout()
+plt.grid()
+plt.show()
+```
 
 ![The difference between basis sets](../journal/vectors/071-0.png)
 
@@ -692,11 +1167,119 @@ PearsonRResult(statistic=np.float64(0.956182887467515), pvalue=np.float64(0.0438
 
 correlation between different vectors
 
+```python
+# correlation between different vectors
+a = np.linspace(0,10,10)
+b = a
+c = a**2
+d = 2**a
+a2 = np.linspace(0,11,11)
+e = [math.log(int(x)) for x in a2 if x &gt; 0]
+f = [math.log(int(x))*x for x in a2 if x &gt; 0]
+g = [math.factorial(int(x)) for x in a2 if x &gt; 0]
+
+l = pd.Series([i for i in range(10)])
+q = pd.Series([i**2 for i in range(10)])
+e = pd.Series([2**i for i in range(10)])
+logn = pd.Series([math.log(int(x)) for x in a2 if x &gt; 0])
+nlogn = pd.Series([math.log(int(x))*x for x in a2 if x &gt; 0])
+f = pd.Series([math.factorial(i) for i in range(10)])
+df = pd.DataFrame([logn,l,nlogn,q,e,f], index=["logarithmic","linear","n log n","quadratic","exponential","factorial"])
+corr_df = df.copy()
+
+df = df.style.set_caption("Vectors computed from functions f(x) where x = [0,10]")
+display(df)
+
+plt.close()
+plt.figure(figsize=[4,4])
+plt.plot(a[:6],logn[:6],label="logarithmic")
+plt.plot(a[:6],b[:6],label="linear")
+plt.plot(a[:6],nlogn[:6],label="n log n")
+plt.plot(a[:6],c[:6],label="quadratic")
+plt.plot(a[:6],d[:6],label="exponential")
+plt.plot(a[:5],g[:5],label="factorial")
+plt.xlabel("input integer")
+plt.ylabel("output value")
+plt.grid()
+plt.legend(fontsize="x-small")
+plt.show()
+
+corr_df = corr_df.T.corr()
+corr_df = corr_df.style.set_caption("Correlation between vectors")
+display(corr_df)
+```
+
 ![correlation between different vectors](../journal/vectors/076-0.png)
 
 Mean-centering variables is a step in the correlation equation, illustrated below
 
+```python
+# Mean-centering variables is a step in the 
+# correlation equation, illustrated below
+x = np.random.rand(5,10)
+y = np.random.rand(5,10)
+# can also be done this way
+# fig, axs = plt.subplots(1,2)
+# axs[0].scatter(x,y)
+plt.close()
+fig, (ax1, ax2) = plt.subplots(1,2, figsize=[3,3])
+fig.subplots_adjust(left=.0, right=2.5)
+ax1.scatter(x,y)
+ax1.set_xlim(-1,1)
+ax1.set_ylim(-1,1)
+ax1.set_title("random variables")
+ax1.grid()
+ax2.scatter(x-np.mean(x), y-np.mean(y))
+ax2.set_xlim(-1,1)
+ax2.set_ylim(-1,1)
+ax2.set_title("mean-centered")
+ax2.grid()
+```
+
 ![Mean-centering variables is a step in the correlation equation, illustrated below](../journal/vectors/077-0.png)
+
+## By hand: mean centering
+
+```python
+def cen0(x):
+    mean = np.mean(x)
+    return x-mean
+```
+
+```python
+mu = np.mean([-1,1,1,-1])
+print([-1,1,1,-1]-mu)
+```
+
+```
+[-1.  1.  1. -1.]
+```
+
+```python
+mu = np.mean([-2,0,-4,-2])
+print([-2,0,-4,-2]-mu)
+```
+
+```
+[ 0.  2. -2.  0.]
+```
+
+```python
+cen0([3,6,3,0])
+```
+
+```
+array([ 0.,  3.,  0., -3.])
+```
+
+```python
+cen0([1,4,-1,0])
+```
+
+```
+array([ 0.,  3., -2., -1.])
+```
+
 
 As the Big O complexity vectors above grow, their respective correlation coefficients describe how those vectors move apart, e.g. the correlation between the `log n` and `factorial` vectors is the smallest coefficient, as those vectors grow apart the fastest.
 
@@ -707,6 +1290,8 @@ Both give measures of similarity, but start from different assumptions.
 In Pearson, [0,1,2,3] and [100,101,102,103] are perfectly correlated $(\rho=1)$.
 
 But the cosine similarity is .808, because the variables are a different numeric scale.
+
+Pearson correlation, written above, subtracts each variable's average before that same fraction. The average is the ordinary mean: add the entries and divide by how many there are. Cosine similarity uses the entries as they stand. Adding 100 to every entry of $[0,1,2,3]$ leaves the Pearson correlation at 1, and moves the cosine similarity to 0.808. The cosine distance between those two vectors is $1-0.808=0.192$.
 
 ## Cosine Distance
 
@@ -737,6 +1322,34 @@ cosine distance   0.411332
 
 random data for k-means clustering
 
+```python
+## Create data
+nPerClust = 50
+
+# blur around centroid (std units)
+blur = 1
+
+# XY centroid locations
+A = [  1, 1 ]
+B = [ -3, 1 ]
+C = [  3, 3 ]
+
+# generate data
+a = [ A[0]+np.random.randn(nPerClust)*blur , A[1]+np.random.randn(nPerClust)*blur ]
+b = [ B[0]+np.random.randn(nPerClust)*blur , B[1]+np.random.randn(nPerClust)*blur ]
+c = [ C[0]+np.random.randn(nPerClust)*blur , C[1]+np.random.randn(nPerClust)*blur ]
+
+# concatenate into a matrix
+data = np.transpose(np.concatenate((a,b,c),axis=1))
+
+plt.close()
+plt.figure(figsize=(3, 3))
+plt.scatter(data[:,0], data[:,1]) # array[row_start:row_stop:row_step, col_start:col_stop:col_step]
+plt.title("random data for k-means clustering")
+plt.grid()
+plt.show()
+```
+
 ![random data for k-means clustering](../journal/vectors/083-0.png)
 
 STEP 1
@@ -755,6 +1368,8 @@ $$\delta_{i,j}=\sqrt{(d^x_i-c^x_j)^2+(d^y_i-c^y_j)^2}$$
 
 where $\delta_{i,j}$ is the distance from data observation $i$ ot centroid $j$, $d^x_i$ is feature $x$ of the $i$th data observation, and $c^x_j$ is the $x$-axis coordinate of centroid $j$.
 
+Each subtracted pair is one leg of a right triangle: the horizontal gap between the point and the centroid, and the vertical gap. The square root of the sum of those squares is the hypotenuse, the straight-line distance. A larger distance has a larger square, so the centroid with the smallest squared distance is the same centroid the square root would have picked.
+
 STEP 2
 
 compute the distances from data observations to centroids
@@ -771,17 +1386,87 @@ recompute and migrate centroids
 
 Here we loop over $k$ clusters, and use indexing to find al the data points assigned to each cluster.
 
+```python
+# run the procedure, starting with computing the distances from data to centroids
+# until some convergence criteria
+plt.close()
+plt.figure(figsize=[6,6])
+plt.scatter(data[:,0], data[:,1])
+plt.scatter(centroids[:,0], centroids[:,1])
+plt.title('k-means clustering')
+plt.grid()
+plt.show()
+```
+
 ![k-means clustering](../journal/vectors/090-0.png)
 
 ## Filtering and Feature Detection with a kernel and the dot product
 
+A kernel here is a short fixed vector, a small pattern. At each position along the signal, the dot product of the kernel with the stretch of signal under it is large when that stretch points the same way as the pattern. The kernel $[-1,1]$ is large where the signal steps up, and large with the opposite sign where the signal steps down.
+
 a random signal with plateau function use the dot product to detect changes in the signal
+
+```python
+# a random signal with plateau function
+signal = np.zeros(100)
+modulation = np.random.choice(range(89))
+signal[modulation:modulation+10] = 1
+
+# use the dot product to detect changes in the signal
+kernel = np.array([-1,1])
+detected_features = np.zeros(len(signal))
+for step in range(len(signal)-1):
+    _ = np.array([signal[step], signal[step+1]])
+    detected_features[step+1] = np.dot(kernel, _)
+
+plt.close()
+fig, (ax1, ax2) = plt.subplots(1,2, figsize=[10,3])
+ax1.plot(signal)
+ax2.plot(detected_features)
+ax1.set_ylim(-10,10)
+ax2.set_ylim(-10,10)
+ax1.set_title('signal')
+ax2.set_title('edge detection')
+ax1.grid(); ax2.grid()
+```
 
 ![a random signal with plateau function use the dot product to detect changes in the signal](../journal/vectors/092-0.png)
 
 ## Signal smoothing with a kernel and dot product
 
+The same dot product, with a kernel shaped like a low hill. Each output sample is a weighted blend of the samples around it, so a spike is pulled toward its neighbors.
+
 a random signal with plateau function creates an obvious magnitude spike for illustration
+
+```python
+# a random signal with plateau function
+signal = np.random.randn(100)
+
+# creates an obvious magnitude spike for illustration
+signal[50:60] = signal[50:60]+2
+
+# use the dot product to detect changes in the signal
+kernel = np.array([0, 0.1, 0.3, 0.8, 1, 0.8, 0.3, 0.1, 0])
+klen = len(kernel)
+half_klen = klen // 2
+
+smoothed_signal = signal.copy()
+for t in range(half_klen+1,len(signal)-half_klen):
+    smoothed_signal[t] = np.dot(kernel,signal[t-half_klen-1:t+half_klen])
+
+plt.close()
+fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=[10,3])
+ax1.plot(kernel)
+ax2.plot(signal)
+ax3.plot(smoothed_signal)
+ax1.set_ylim(-10,10)
+ax2.set_ylim(-10,10)
+ax3.set_ylim(-10,10)
+ax1.set_title('kernel')
+ax2.set_title('signal')
+ax3.set_title('smoothed signal')
+ax1.grid(); ax2.grid(); ax3.grid()
+```
 
 ![a random signal with plateau function creates an obvious magnitude spike for illustration](../journal/vectors/094-0.png)
 
