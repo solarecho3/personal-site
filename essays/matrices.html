@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script>try { var saved = localStorage.getItem("theme"); if (saved === "dark" || (saved !== "light" && matchMedia("(prefers-color-scheme: dark)").matches)) document.documentElement.setAttribute("data-theme", "dark"); } catch (e) {}</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Matrices · Adam Smith</title>
+  <link rel="icon" href="../favicon.svg">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+</head>
+<body>
+  <header>
+    <div class="identity">
+      <h1><a href="../">Adam Smith</a></h1>
+      <p class="meta">soldier, cto</p>
+      <p class="lede">- Co-founder, CTO - <a href="https://larx.io">Larx</a>.<br>
+      - US Special Operations Command Data Scientist / Analyst.<br>
+      - American special operator.</p>
+      <p class="socials"><a href="https://x.com/solarecho3" rel="me" target="#">X</a> · <a href="https://www.instagram.com/solarecho3" rel="me" target="#">Instagram</a> · <a href="https://github.com/solarecho3" rel="me" target="#">GitHub</a></p>
+    </div>
+    <div class="side">
+      <nav>
+        <a href="../#career">Career</a>
+        <a href="../#journal">Journal</a>
+        <a href="../#media">Media</a>
+      </nav>
+      <span class="theme">
+        <button type="button" data-theme-set="light">Light</button>
+        <button type="button" data-theme-set="dark">Dark</button>
+      </span>
+    </div>
+  </header>
+  <main>
+    <article class="essay">
+      <h1>Matrices</h1>
+      <p class="where">Bold letters, sized as rows by columns. Math counts from 1, Python from 0.</p>
+      <p class="tags"><a href="../#journal/math">math</a> · <a href="../#journal/matrices">matrices</a></p>
+      <div id="essay-body"></div>
+      <textarea id="essay-source" hidden>Study sequence: [Vectors](vectors.html) · Matrices · [Matrix applications](matrix-applications.html) · [Calculus](calculus.html) · [Big O](big-o.html) · [Geometry](geometry.html) · [Signals](signals.html) · [Neural nets](neural-nets.html) · [Distributions](distributions.html)
+
+# Matrices
+
+$$
+\begin{bmatrix}
+1 &amp; 2\\
+\pi &amp; 4\\
+6 &amp; 7
+\end{bmatrix}
+\quad
+\begin{bmatrix}
+-6 &amp; 1/3\\
+e^{4.3} &amp; -1.4\\
+6/5 &amp; 0
+\end{bmatrix}
+$$
+
+Denoted with bold letters like matrix $\mathbf{A}$.
+
+Size indicated with (row, column).
+
+For instance, a 3 x 5 matrix has three rows and five columns: 
+$$
+\mathbf{M} =
+\begin{bmatrix}
+1 &amp; 3 &amp; 5 &amp; 7 &amp; 9\\
+0 &amp; 2 &amp; 4 &amp; 6 &amp; 8\\
+1 &amp; 4 &amp; 7 &amp; 8 &amp; 9
+\end{bmatrix}
+$$
+
+Reference elements by indexing row and column, so the 3rd row and 4th column of matrix $\mathbf{M}$ would be $m_{3,4}=8$.
+
+**Note**, math is 1-based indexing, while Python is 0-based indexing.
+
+Matrix slicing
+
+or
+
+mrows = 5
+
+ncols = 10
+
+M = np.random.randn(mrows, ncols)
+
+```
+Original matrix: 
+ [[ 0  1  2  3  4  5  6  7  8  9]
+ [10 11 12 13 14 15 16 17 18 19]
+ [20 21 22 23 24 25 26 27 28 29]
+ [30 31 32 33 34 35 36 37 38 39]
+ [40 41 42 43 44 45 46 47 48 49]]
+Submatrix: 
+ [[10 11 12 13 14]
+ [20 21 22 23 24]
+ [30 31 32 33 34]]
+```
+
+square matrix
+
+![square matrix](../journal/matrices/097-0.png)
+
+rectangular matrix
+
+![rectangular matrix](../journal/matrices/098-0.png)
+
+diagonal matrix
+
+![diagonal matrix](../journal/matrices/099-0.png)
+
+upper triangular matrix
+
+![upper triangular matrix](../journal/matrices/100-0.png)
+
+lower triangular matrix
+
+![lower triangular matrix](../journal/matrices/101-0.png)
+
+The identity matrix is a square diagonal matrix with all diagonal elements set to 1.
+
+Denoted $\mathbf{I}$ or $\mathbf{I}_5$ to indicate a 5x5 matrix.
+
+Any matrix of vector times the identity matrix is that same matrix of vector; the identity matrix is the equivalent of the number 1.
+
+identity matrix
+
+![identity matrix](../journal/matrices/103-0.png)
+
+matrix multiplication
+
+![matrix multiplication](../journal/matrices/104-0.png)
+
+M @ I
+
+![M @ I](../journal/matrices/105-0.png)
+
+element-wise multiplication
+
+![element-wise multiplication](../journal/matrices/106-0.png)
+
+The same matrix element-wise mutliplied by the identity matrix
+
+![The same matrix element-wise mutliplied by the identity matrix](../journal/matrices/107-0.png)
+
+zeros or zero matrix
+
+```
+array([[0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 0.]])
+```
+
+## Adding and Subtracting Matrices
+
+$$
+\begin{bmatrix}
+0&amp;1&amp;2\\
+0&amp;-1&amp;-2
+\end{bmatrix}
++
+\begin{bmatrix}
+1 &amp; 2 &amp; 3\\
+4 &amp; 5 &amp; 6
+\end{bmatrix}
+=
+\begin{bmatrix}
+(0 + 1) &amp; (1 + 2) &amp; (2+3)\\
+(0 + 4) &amp; (-1 + 5) &amp; (-2 + 6)
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 &amp; 3 &amp; 5\\
+4 &amp; 4 &amp; 4
+\end{bmatrix}
+$$
+
+add two row vectors
+
+```
+a [[ 0  1  2]
+ [ 0 -1 -2]]
++
+b [[1 2 3]
+ [4 5 6]]
+array([[1, 3, 5],
+       [4, 4, 4]])
+```
+
+add two row vectors
+
+```
+a [[ 0  1  2]
+ [ 0 -1 -2]]
+-
+b [[1 2 3]
+ [4 5 6]]
+array([[-1, -1, -1],
+       [-4, -6, -8]])
+```
+
+## Shifting a Matrix, or adding a scalar
+
+It isn't formally possible to add a scalar to a matrix like $\lambda+\mathbf{A}$.
+
+Python allows broadcasting a scalar to all the elements of a matrix, like:
+
+```python
+np.zeros((5,5))+3
+```
+
+```
+array([[3., 3., 3., 3., 3.],
+       [3., 3., 3., 3., 3.],
+       [3., 3., 3., 3., 3.],
+       [3., 3., 3., 3., 3.],
+       [3., 3., 3., 3., 3.]])
+```
+
+In linear algebra, you can *shift* a matrix by adding a constant value to the diagonal, implemented by adding a scalar multiplied identity matrix like $\mathbf{A}+\lambda\mathbf{I}$:
+
+$$
+\begin{bmatrix}
+4 &amp; 5 &amp; 1\\
+0 &amp; 1 &amp; 11\\
+4 &amp; 9 &amp; 7
+\end{bmatrix}
++
+6
+\begin{bmatrix}
+1 &amp; 0 &amp; 0\\
+0 &amp; 1 &amp; 0\\
+0 &amp; 0 &amp; 1
+\end{bmatrix}
+=
+\begin{bmatrix}
+10 &amp; 5 &amp; 1\\
+0 &amp; 7 &amp; 11\\
+4 &amp; 9 &amp; 13
+\end{bmatrix}
+$$
+
+```python
+A = np.array([ [4,5,1],[0,1,11],[4,9,7] ])
+s = 6
+print(A)
+print("Not shifting; broadcasting")
+print(A + s)
+print("Shifting")
+print(A + s*np.eye(len(A)))
+```
+
+```
+[[ 4  5  1]
+ [ 0  1 11]
+ [ 4  9  7]]
+Not shifting; broadcasting
+[[10 11  7]
+ [ 6  7 17]
+ [10 15 13]]
+Shifting
+[[10.  5.  1.]
+ [ 0.  7. 11.]
+ [ 4.  9. 13.]]
+```
+
+Shifting is the mechanism for finding eigenvalues of a matrix, and regularizing matrices when fitting models to data.
+
+## Scalar and Hadamard Multiplications
+
+Both are element-wise operations.
+
+**Scalar**:
+
+$$
+\gamma
+\begin{bmatrix}
+a &amp; b\\
+c &amp; d
+\end{bmatrix}
+=
+\begin{bmatrix}
+\gamma a &amp; \gamma b\\
+\gamma c &amp; \gamma d
+\end{bmatrix}
+$$
+
+**Hadamard**:
+
+$$
+\begin{bmatrix}
+2 &amp; 3\\
+4 &amp; 5
+\end{bmatrix}
+\odot
+\begin{bmatrix}
+a &amp; b\\
+c &amp; d
+\end{bmatrix}
+=
+\begin{bmatrix}
+2a &amp; 3b\\
+4c &amp; 5d
+\end{bmatrix}
+$$
+
+scalar multiplication
+
+```
+A
+[[ 4  5  1]
+ [ 0  1 11]
+ [ 4  9  7]]
+A+6
+[[10 11  7]
+ [ 6  7 17]
+ [10 15 13]]
+```
+
+hadamard
+
+```
+A*B
+[[ 16  25   1]
+ [  0   1 121]
+ [ 16  81  49]]
+np.multiply()
+[[ 16  25   1]
+ [  0   1 121]
+ [ 16  81  49]]
+```
+
+## Matrix Multiplication
+
+Rather than element-wise, matrix multiplication operates row/column-wise. Standard matrix multiplication reduces to a systematic collection of dot products between rows of one matrix and the columns of the other matrix. **Matrix multiplication is an organized collection of dot products between rows of the left matrix and columns of the right matrix.**
+
+### Rules for MatMul Validity
+
+Matrices are written as $M\times N$, rows by columns.
+
+Two matrices multiplying each other can have different sizes. So the size of the first matrix is $M \times N$, and the second is $N \times K$.
+
+$$
+\begin{bmatrix}
+0 &amp; 1 &amp; 2\\
+3 &amp; 4 &amp; 5
+\end{bmatrix}
+@
+\begin{bmatrix}
+0 &amp; 1\\
+2 &amp; 3\\
+4 &amp; 5
+\end{bmatrix}
+$$
+$$
+M \times N\,@\,N \times K = M \times K
+$$
+
+If the "inner" dimensions match, the matrix multiplication is valid, and the size of the product is defined by the "outer" dimensions. 
+
+Put another way, matmul is valid with the number of columns on the left matches the number of rows on the right, and the size of the product is defined by the number of rows on the left, and the number of columns on the right.
+$$
+\begin{bmatrix}
+2 &amp; 3\\
+4 &amp; 5
+\end{bmatrix}
+\begin{bmatrix}
+a &amp; b\\
+c &amp; d
+\end{bmatrix}
+=
+\begin{bmatrix}
+(2a+3c)&amp;(2b+3d)\\
+(4a+5c)&amp;(4b+5d)
+\end{bmatrix}
+$$
+
+THe dot product is a number that encodes the relationship between two vectors. So, the result of matrix multiplication is a matrix that stores all the pairwise linear relationships between rows of the left matrix and the columns of the right.
+
+```python
+A = np.array([ [0,1,2],[3,4,5] ])
+B = np.array([ [0,1],[2,3],[4,5] ])
+C = A@B
+print("A", A.shape)
+print(A,'\n')
+print("B", B.shape)
+print(B,'\n')
+print("A@B", C.shape)
+print(C)
+```
+
+```
+A (2, 3)
+[[0 1 2]
+ [3 4 5]] 
+
+B (3, 2)
+[[0 1]
+ [2 3]
+ [4 5]] 
+
+A@B (2, 2)
+[[10 13]
+ [28 40]]
+```
+
+## Matrix-vector Multiplication
+
+Multiplying a matrix and a vector is not a special operation. The same dimensionality rule applies.
+
+```python
+A
+```
+
+```
+array([[0, 1, 2],
+       [3, 4, 5]])
+```
+
+```python
+v = np.array([0,1,2]) # row vector
+print(A@v)
+print(A.shape, '@', v.shape)
+print((A@v).shape)
+```
+
+```
+[ 5 14]
+(2, 3) @ (3,)
+(2,)
+```
+
+Matrix-vector multiplication always results in a vector. The orientation depends on the orientation of the multiplicand vector.
+
+```python
+v = np.array([[0,1,2]]).T # transposed to columnar
+print(A@v)
+print(A.shape, '@', v.shape)
+print((A@v).shape)
+```
+
+```
+[[ 5]
+ [14]]
+(2, 3) @ (3, 1)
+(2, 1)
+```
+
+## Matrix-vector Multiplication for Linear Weighted Combinations
+
+Put the individual vectors into a matrix, and the weights into the corresponding elements of a vector:
+
+$$
+4
+\begin{bmatrix}
+3\\0\\6
+\end{bmatrix}
++ 3
+\begin{bmatrix}
+1\\2\\5
+\end{bmatrix}
+\Rightarrow
+\begin{bmatrix}
+3 &amp; 1\\
+0 &amp; 2\\
+6 &amp; 5
+\end{bmatrix}
+\begin{bmatrix}
+4\\3
+\end{bmatrix}
+=
+\begin{bmatrix}
+(3*4)+(1*3)\\
+(0*4)+(2*3)\\
+(6*4)+(5*3)
+\end{bmatrix}
+=
+\begin{bmatrix}
+15\\6\\39
+\end{bmatrix}
+$$
+
+```python
+a = np.array([ [3,0,6],[1,2,5],])
+b = np.array([4,3])
+a.T@b
+```
+
+```
+array([15,  6, 39])
+```
+
+## Geometric Transforms
+
+Matrix-vector multiplication is a way of rotating and scaling vectors (scalar-vector multiplication can only scale).
+
+```python
+M = np.array([ [2,3],[2,1] ])
+x = np.array([ [1,1.5] ]).T # composed as a row vector, then transposed
+Mx = M@x
+print(Mx)
+```
+
+```
+[[6.5]
+ [3.5]]
+```
+
+Exposing eigenvalues with geometric transformation
+
+![Exposing eigenvalues with geometric transformation](../journal/matrices/130-0.png)
+
+## Norms
+
+Frobenius/Euclidean/l2 norm matrix distance
+
+computed as the square root
+
+of the sum of the squared elements
+
+```
+np.float64(10.895423745906376)
+```
+
+## Trace
+
+The trace of a matrix is the sum of the diagonal elements.
+
+```python
+np.trace(A)
+```
+
+```
+np.int64(14)
+```
+
+```python
+np.trace(B)
+```
+
+```
+np.int64(14)
+```
+
+Euclidean/Frobenius norm can also be computed as
+
+the square root of the trace
+
+of the matrix times its transpose
+
+```
+21.142374511865974
+21.142374511865974
+```
+
+## Matrix Space
+
+There are 4 matrix spaces: column, row, null, left-null. They are defined as the set of linear weighted combinations of different features of the matrix.
+
+- Column space comprises all the linear weighted combinations of the columns in the matrix and is written $C(\mathbf{A})$.
+- Row space comprises all the linear weighted combinations of the rows in the matrix and is written $R(\mathbf{A})$ or $C(\mathbf{A}^T)$.
+
+## Null Space
+
+Null space is the set of non-trivial vectors such that, given a matrix $\mathbf{A}$ and a vector $\mathbf{y}$, $\mathbf{Ay}=\mathbf{0}$. It is the set of vectors that linearly combines the columns to produce the zeros vector--in other words, any vector $\mathbf{y}$ that solves the equation $\mathbf{Ay}=\mathbf{0}$. The trivial solution $\mathbf{y}=\mathbf{0}$ is excluded. The null space is important for finding eigenvectors and other things.
+
+Full-rank and full column-rank matrices have empty null spaces, whereas reduced-rank matrices have nonempty(nontrivial) null spaces. The null space is empty when the columns of the matrix form a linearly independent set.
+
+A is a reduced-rank matrix and so
+
+has a non-trivial null space.
+
+```
+matrix A:
+ [[ 1 -1]
+ [-2  2]] 
+
+rank: 1 
+
+null space:
+ [[ 0.70710678 -0.70710678]
+ [-1.41421356  1.41421356]]
+```
+
+B is a full-rank matrix and so
+
+it's null space is an empty set
+
+thus, the code fails
+
+```
+matrix A:
+ [[ 1 -1]
+ [-2  3]] 
+
+rank: 2 
+
+Failed to calculate nullspace because operands could not be broadcast together with shapes (2,2) (2,0)
+```
+
+## Rank
+Rank is a non-negative integer associated with a matrix. It reflects the largest number of columns (or rows) that can form a linearly independent set. Matrices with a rank smaller than the maximum possible are called reduced-rank or singular.
+
+The rank of a matrix is the dimension of the vector space generated by its columns. The vector space is described by the set of possible vectors in the matrix, and if vector $\mathbf{a}$ can be described as the linear combination of  vector $\mathbf{b}$, then they are part of the same subspace.
+
+### Reduced Rank
+A matrix is reduced-rank if at least one column can be expressed as a linear combination of other columns.
+
+Max rank is the smaller of its row or column count
+
+i.e. Max rank = min{M,N}
+
+TODO: Add check for linear independence first
+
+because vectors must be linearly independent
+
+```
+Rank: 2
+Rank: 6
+Np rank: 2
+Np rank: 6
+```
+
+matrix augmentation
+
+transpose into a column vector
+
+```
+array([[1],
+       [2],
+       [3]])
+matrix([[4, 5, 6, 1],
+        [0, 1, 2, 2],
+        [9, 9, 4, 3]])
+```
+
+matrix augmentation a second way
+
+transpose into a column vector
+
+```
+array([[1],
+       [2],
+       [3]])
+matrix([[4, 5, 6, 1],
+        [0, 1, 2, 2],
+        [9, 9, 4, 3]])
+```
+
+## Determine if a Vector is in Matrix Column Space
+
+1. **Augment the matrix with the vector**. The original matrix is $\mathbf{A}$, and the augmented matrix is $\mathbf{\widetilde{A}}$.
+2. **Compute the ranks of the two matrices**.
+3. **Compare the two ranks**. There will be one of two possible outcomes:
+- $rank(\mathbf{A})=rank(\mathbf{\widetilde{A}})$. Vector $\mathbf{v}$ is in the column space of matrix $\mathbf{A}$.
+- $rank(\mathbf{A})&lt;rank(\mathbf{\widetilde{A}})$. Vector $\mathbf{v}$ is **not** in the column space of matrix $\mathbf{A}$.
+
+If $\mathbf{v}\in C(\mathbf{A})$, then $\mathbf{v}$ can be expressed as some linear weighted combination of the columns of $\mathbf{A}$. The columns of the augmented matrix $\widetilde{\mathbf{A}}$ form a linearly dependent set. In terms of span, vector $\mathbf{v}$ is redundant in $\widetilde{\mathbf{A}}$. Hence, rank remains the same.
+
+Conversely, if $\mathbf{v}\notin C(\mathbf{A})$, then $\mathbf{v}$ cannot be expressed as a linear weighted combination of the columns of $\mathbf{A}$, which means that $\mathbf{v}$ has added new inforrmation into $\widetilde{\mathbf{A}}$. And that means the rank will increase by 1.
+
+## Determining Linear Independence of a Vector Set
+
+place vectors in a matrix
+
+compute the rank of the matrix
+
+compare that rank to the maximum possible rank of that matrix: min(M,N).
+
+possible outcomes:
+
+r = M: The vector set is linearly independent.
+
+r &lt; M: The vector set is linearly dependent.
+
+```
+Dependent
+```
+
+place vectors in a matrix
+
+compute the rank of the matrix
+
+compare that rank to the maximum possible rank of that matrix: min(M,N).
+
+possible outcomes:
+
+r = M: The vector set is linearly independent.
+
+r &lt; M: The vector set is linearly dependent.
+
+```
+Independent
+```
+
+If the rank is smaller than the number of columns, then at least one column can be described as a linear combination of the other columns. If the rank equals the number of columns, then each column contributes unique information to the matrix, which means that no column can be described as a linear combination of others.
+
+## Determinant
+
+Denoted $det(\mathbf{A})$ or $|\mathbf{A}|$. Greek capital delta $\Delta$ can be used when not referring to a specific matrix.
+
+My book by Mike Cohen suggests computing the determinant is an awful experience and "if I live a thousand years" without doing it by hand it will be worth it. I read his quick explanation of why this is true, and can verify I won't even be attempting it. I get it, it's horrific and onerous and it's 2024 so let's come back to that when we have time and money in surplus.
+
+`np.linalg.det()` or `scipy.linalg.det()` will do nicely. **Note, the determinant is done on a square matrix.**
+
+Reduced-rank matrices have a determinant $\Delta=0$.
+Full-rank matrices have a non-zero determinant $\Delta\ne 0$.
+
+This is because the determinant represents the scaling factor of a volume in the matrix space when a linear transformation is applied by the matrix. Only square matrices can represent linear transformations that map a vector space to itself, which is necessary for the determinant to be defined.
+
+For example, a 1x1 space is transformed by a square matrix. The volume of that 1x1 space, when transformed by a square matrix, is scaled by the determinant of the matrix.
+
+$\Delta=0$ can be geometrically interpreted as a matrix transformation in which at least one dimension gets flattened to have a surface area but no volume. This is because the determinant is the volume of the transformed space, and if the determinant is 0, then the volume of the transformed space is 0.
+
+![Determinant](../journal/matrices/151-0.png)
+
+in this example, a space is transformed by a 5x5 matrix,
+
+and the determinant shows that the volume of the space
+
+is scaled by the determinant factor.
+
+```
+6.0
+```
+
+this matrix is reduced-rank because
+
+the vectors are linearly dependent.
+
+this has the effect of collapsing the
+
+volume of the space to 0, because some
+
+of the vectors lie along the same line.
+
+```
+0.0
+```
+
+## Characteristic Polynomial
+
+Combining shifting a matrix with the determinant is called the *characteristic polynomial*.
+$$det(\mathbf{A}-\lambda\mathbf{I})=\Delta$$
+
+It transforms a square matrix, shifted by $\lambda$, into an equation that equals the determinant. Knowing the determinant allows you to solve for $\lambda$.
+
+```python
+A
+```
+
+```
+matrix([[1, 3],
+        [3, 1]])
+```
+
+```python
+print("The shifted matrix.")
+print(A - I)
+```
+
+```
+The shifted matrix.
+[[3. 3.]
+ [3. 3.]]
+```
+
+```python
+print("The characteristic polynomial", np.linalg.det(A-I))
+```
+
+```
+The characteristic polynomial 0.0
+```
+
+Next: [Matrix applications](matrix-applications.html).</textarea>
+    </article>
+  </main>
+  <noscript><p>Enable JavaScript to read this journal entry.</p></noscript>
+  <script src="../theme.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+  <script defer src="../essay.js"></script>
+</body>
+</html>

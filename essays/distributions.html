@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script>try { var saved = localStorage.getItem("theme"); if (saved === "dark" || (saved !== "light" && matchMedia("(prefers-color-scheme: dark)").matches)) document.documentElement.setAttribute("data-theme", "dark"); } catch (e) {}</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Distributions · Adam Smith</title>
+  <link rel="icon" href="../favicon.svg">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+</head>
+<body>
+  <header>
+    <div class="identity">
+      <h1><a href="../">Adam Smith</a></h1>
+      <p class="meta">soldier, cto</p>
+      <p class="lede">- Co-founder, CTO - <a href="https://larx.io">Larx</a>.<br>
+      - US Special Operations Command Data Scientist / Analyst.<br>
+      - American special operator.</p>
+      <p class="socials"><a href="https://x.com/solarecho3" rel="me" target="#">X</a> · <a href="https://www.instagram.com/solarecho3" rel="me" target="#">Instagram</a> · <a href="https://github.com/solarecho3" rel="me" target="#">GitHub</a></p>
+    </div>
+    <div class="side">
+      <nav>
+        <a href="../#career">Career</a>
+        <a href="../#journal">Journal</a>
+        <a href="../#media">Media</a>
+      </nav>
+      <span class="theme">
+        <button type="button" data-theme-set="light">Light</button>
+        <button type="button" data-theme-set="dark">Dark</button>
+      </span>
+    </div>
+  </header>
+  <main>
+    <article class="essay">
+      <h1>Distributions</h1>
+      <p class="where">Temperature, Zipf, and token probabilities.</p>
+      <p class="tags"><a href="../#journal/math">math</a> · <a href="../#journal/distributions">distributions</a></p>
+      <div id="essay-body"></div>
+      <textarea id="essay-source" hidden>Study sequence: [Vectors](vectors.html) · [Matrices](matrices.html) · [Matrix applications](matrix-applications.html) · [Calculus](calculus.html) · [Big O](big-o.html) · [Geometry](geometry.html) · [Signals](signals.html) · [Neural nets](neural-nets.html) · Distributions
+
+Let's explain the temperature scaling formula for softmax probabilities
+
+The formula qi = exp(zi/T) / sum(exp(zj/T)) represents temperature-scaled softmax, where:
+
+- qi is the output probability for class i
+
+- zi is the logit (pre-softmax activation) for class i
+
+- T is the temperature parameter
+
+- The sum in denominator is over all classes j
+
+Let's demonstrate with a simple example
+
+Calculate numerator: exp(zi/T)
+
+Calculate denominator: sum(exp(zj/T))
+
+Calculate final probability qi
+
+Key observations:
+
+1. Lower temperature (T&lt;1) makes distribution more peaked/confident
+
+2. Higher temperature (T&gt;1) makes distribution more uniform/smooth
+
+3. T=1 gives standard softmax without scaling
+
+```
+Numerator exp(zi/T) = 54.5982
+Denominator sum(exp(zj/T)) = 62.9872
+
+Final probability qi = 0.8668
+```
+
+temperatures 0.1, 0.5, 1.0, 2.0, 5.0
+
+![temperatures 0.1, 0.5, 1.0, 2.0, 5.0](../journal/distributions/001-0.png)
+
+temperatures 0.1, 0.25, 0.5, 0.75, 1.0
+
+![temperatures 0.1, 0.25, 0.5, 0.75, 1.0](../journal/distributions/003-0.png)
+
+Effect of Temperature on Token Selection Probabilities (Approaching T=0)
+
+![Effect of Temperature on Token Selection Probabilities (Approaching T=0)](../journal/distributions/008-0.png)
+
+Zipf
+
+![Zipf](../journal/distributions/004-0.png)
+
+Frequency Distribution of Subword Tokens
+
+![Frequency Distribution of Subword Tokens](../journal/distributions/005-0.png)
+
+Token Probability Distribution in Transformer Output
+
+![Token Probability Distribution in Transformer Output](../journal/distributions/006-0.png)
+
+Token Probability Distribution with Temperature=0
+
+![Token Probability Distribution with Temperature=0](../journal/distributions/007-0.png)</textarea>
+    </article>
+  </main>
+  <noscript><p>Enable JavaScript to read this journal entry.</p></noscript>
+  <script src="../theme.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+  <script defer src="../essay.js"></script>
+</body>
+</html>

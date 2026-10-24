@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script>try { var saved = localStorage.getItem("theme"); if (saved === "dark" || (saved !== "light" && matchMedia("(prefers-color-scheme: dark)").matches)) document.documentElement.setAttribute("data-theme", "dark"); } catch (e) {}</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Neural nets · Adam Smith</title>
+  <link rel="icon" href="../favicon.svg">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+</head>
+<body>
+  <header>
+    <div class="identity">
+      <h1><a href="../">Adam Smith</a></h1>
+      <p class="meta">soldier, cto</p>
+      <p class="lede">- Co-founder, CTO - <a href="https://larx.io">Larx</a>.<br>
+      - US Special Operations Command Data Scientist / Analyst.<br>
+      - American special operator.</p>
+      <p class="socials"><a href="https://x.com/solarecho3" rel="me" target="#">X</a> · <a href="https://www.instagram.com/solarecho3" rel="me" target="#">Instagram</a> · <a href="https://github.com/solarecho3" rel="me" target="#">GitHub</a></p>
+    </div>
+    <div class="side">
+      <nav>
+        <a href="../#career">Career</a>
+        <a href="../#journal">Journal</a>
+        <a href="../#media">Media</a>
+      </nav>
+      <span class="theme">
+        <button type="button" data-theme-set="light">Light</button>
+        <button type="button" data-theme-set="dark">Dark</button>
+      </span>
+    </div>
+  </header>
+  <main>
+    <article class="essay">
+      <h1>Neural nets</h1>
+      <p class="where">A simple net, its gradient, and the loss surface.</p>
+      <p class="tags"><a href="../#journal/math">math</a> · <a href="../#journal/networks">networks</a></p>
+      <div id="essay-body"></div>
+      <textarea id="essay-source" hidden>Study sequence: [Vectors](vectors.html) · [Matrices](matrices.html) · [Matrix applications](matrix-applications.html) · [Calculus](calculus.html) · [Big O](big-o.html) · [Geometry](geometry.html) · [Signals](signals.html) · Neural nets · [Distributions](distributions.html)
+
+a simple neural net
+
+Simple neural network with one hidden layer
+
+Loss function: L = (y - ŷ)²
+
+ŷ = w2 * sigmoid(w1 * x + b1) + b2
+
+where sigmoid(z) = 1/(1 + e^(-z))
+
+Example computation for a single data point
+
+Forward pass
+
+Loss
+
+Forward pass
+
+```
+1.1 = 0.5 * 2.0 + 0.1
+0.7502601055951177 = sigmoid(1.1)
+0.6002080844760942 = 0.8 * 0.7502601055951177 + 0.0
+0.15983357571827383 = (1.0 - 0.6002080844760942**2
+```
+
+# gradients
+
+Original discrete version:
+
+![Original discrete version:](../journal/neural-nets/003-0.png)
+
+hessian loss matrix
+
+![hessian loss matrix](../journal/neural-nets/004-0.png)
+
+a wider loss landscape
+
+![a wider loss landscape](../journal/neural-nets/005-0.png)
+
+Next: [Distributions](distributions.html).</textarea>
+    </article>
+  </main>
+  <noscript><p>Enable JavaScript to read this journal entry.</p></noscript>
+  <script src="../theme.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+  <script defer src="../essay.js"></script>
+</body>
+</html>

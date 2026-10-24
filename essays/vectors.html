@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script>try { var saved = localStorage.getItem("theme"); if (saved === "dark" || (saved !== "light" && matchMedia("(prefers-color-scheme: dark)").matches)) document.documentElement.setAttribute("data-theme", "dark"); } catch (e) {}</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vectors · Adam Smith</title>
+  <link rel="icon" href="../favicon.svg">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+</head>
+<body>
+  <header>
+    <div class="identity">
+      <h1><a href="../">Adam Smith</a></h1>
+      <p class="meta">soldier, cto</p>
+      <p class="lede">- Co-founder, CTO - <a href="https://larx.io">Larx</a>.<br>
+      - US Special Operations Command Data Scientist / Analyst.<br>
+      - American special operator.</p>
+      <p class="socials"><a href="https://x.com/solarecho3" rel="me" target="#">X</a> · <a href="https://www.instagram.com/solarecho3" rel="me" target="#">Instagram</a> · <a href="https://github.com/solarecho3" rel="me" target="#">GitHub</a></p>
+    </div>
+    <div class="side">
+      <nav>
+        <a href="../#career">Career</a>
+        <a href="../#journal">Journal</a>
+        <a href="../#media">Media</a>
+      </nav>
+      <span class="theme">
+        <button type="button" data-theme-set="light">Light</button>
+        <button type="button" data-theme-set="dark">Dark</button>
+      </span>
+    </div>
+  </header>
+  <main>
+    <article class="essay">
+      <h1>Vectors</h1>
+      <p class="where">Assume all vectors are columnar unless indicated.</p>
+      <p class="tags"><a href="../#journal/math">math</a> · <a href="../#journal/vectors">vectors</a></p>
+      <div id="essay-body"></div>
+      <textarea id="essay-source" hidden>Study sequence: Vectors · [Matrices](matrices.html) · [Matrix applications](matrix-applications.html) · [Calculus](calculus.html) · [Big O](big-o.html) · [Geometry](geometry.html) · [Signals](signals.html) · [Neural nets](neural-nets.html) · [Distributions](distributions.html)
+
+# A Notebook on Vectors in python
+
+Assume all vectors are columnar unless indicated.
+
+Some syntax:
+
+Numpy 2D matrix slicing = array[row_start:row_stop:row_step, col_start:col_stop:col_step]
+
+add the zero vector to the
+
+*args tuple for x/y limits
+
+find min/max x and y vals
+
+and set the x and y limits
+
+# Vectors
+
+## Row and Column Vectors
+
+row vector
+
+```
+[[1 2 3]]
+(1, 3)
+```
+
+column vector
+
+```
+[[4]
+ [5]
+ [6]]
+(3, 1)
+```
+
+## Adding Vectors
+
+add two row vectors
+
+```
+[[1 2 3]] + [[4 5 6]]
+array([[5, 7, 9]])
+```
+
+Vector addition: [2 3] + [2 1]
+
+![Vector addition: 2 3 + 2 1](../journal/vectors/007-0.png)
+
+## Subtracting Vectors
+
+Mathematically, subtracting vectors is just negative addition. But, geometrically, the procedure is different.
+
+In vector addition, the added vector starts at the head of the base vector. The answer is the line between the first tail and last head.
+
+In vector subtraction, the subtracted, or 'negative' vector, starts at the tail of the other vector. The resultant is the vector from the head of the subtracted, or negative, or subtrahend, vector to the head of the minuend vector.
+
+Vector subtraction: [2 3] - [2 1]
+
+![Vector subtraction: 2 3 - 2 1](../journal/vectors/009-0.png)
+
+## Averaging Vectors
+
+Averaging is sum then divide by N.
+Averaging vectors is to add them, then scalar multiply by 1/N vectors.
+
+```python
+print("(", a, "+", b, ") * 1/N vectors")
+(a+b)*(1/2)
+```
+
+```
+( [2 3] + [2 1] ) * 1/N vectors
+array([2., 2.])
+```
+
+## Multiplying Vectors
+
+```python
+print(a, "*", b)
+a*b
+```
+
+```
+[2 3] * [2 1]
+array([4, 3])
+```
+
+## Vector Transposition
+Matrices have **(row,column)** indices. Transposition swaps those indices.
+
+$\mathbf{m}^T_{i,j}=\mathbf{m}_{j,i}$
+
+## Vector Dimensionality
+
+Vectors have either one row, or one column, depending on orientation.
+
+So, a 6D row vector $\mathbf{v}$ has indices $i=1$, $j=6$, or $\mathbf{m}_{1,6}$.
+
+## Vector Broadcasting
+
+add a row to column vector
+
+```
+[[4]
+ [5]
+ [6]] + [[1 2 3]]
+array([[5, 6, 7],
+       [6, 7, 8],
+       [7, 8, 9]])
+```
+
+## Vector Magnitude
+
+The geometric length (magnitude) of a vector.
+
+Denoted like $\lVert\mathbf{v}\rVert$
+
+The magnitude is the distance from the tail to the head of a vector, computed using the standard Euclidean distance formula: the square root of the sum of squared vector elements: $$\displaystyle\lVert\mathbf{v}\rVert=\sqrt{\sum{^n_i}=1v^2_i}$$
+
+or
+
+$$\lVert\mathbf{v}\rVert^2=\sum{^n_i}=1v^2_i$$
+
+or
+
+$$\lVert\mathbf{v}\rVert=\sqrt{\mathbf{v}^\top\mathbf{v}}$$
+
+math.sqrt(np.dot(x.T, x))
+
+```
+Dimensions: 6
+Magnitude: 9.539392014169456
+Magnitude: 9.539392014169456
+```
+
+## Unit Vectors
+
+$$\lVert\mathbf{v}\rVert=1$$
+
+Creating a unit vector:
+
+$$\mathbf{\widehat{v}}=\frac{1}{\lVert\mathbf{v}\rVert}\mathbf{v}$$
+
+The set of infinite unit vectors is smaller than the set of infinite non-unit vectors. Here's why:
+
+Generate a small number of random points for each set
+
+Print the sets:
+
+a random non-unit vector
+
+```
+np.float64(5.322962650718925)
+```
+
+a random unit vector
+
+```
+np.float64(0.9999999999999999)
+```
+
+All unit vectors norm to 1, meaning they have a magnitude of 1. The set is bounded and closed.
+
+All non-unit vectors can have any magnitude. The set is unbounded and open.
+
+## Crafting a unit vector from a nonunit vector
+
+$$\widehat{\mathbf{v}}=\frac{1}{\lVert\mathbf{v}\rVert}\mathbf{v}$$
+
+Simply scalar multiply by the reciprocal of the vector norm.
+
+```python
+a_unit_vector = 1/(np.linalg.norm(a))*a
+print(a)
+print(np.linalg.norm(a_unit_vector))
+```
+
+```
+[[1 2 3]]
+1.0
+```
+
+## Vector Dot Product
+
+Notations:
+
+$\mathbf{a}^\top\mathbf{b}$,
+
+$\mathbf{a \cdot b}$,
+
+$\langle \mathbf{a, b} \rangle$
+
+$\mathbf{a}$ and $\mathbf{b}$ are vectors, and $a_i$ indicates the *i*th element of $\mathbf{a}$. 
+
+The equation: $$\delta=\sum^n_{i=1}a_i b_i$$
+
+So: $$\begin{bmatrix} 1 2 3 4\end{bmatrix}\cdot\begin{bmatrix}5 6 7 8\end{bmatrix}$$
+$$=1\times5+2\times6+3\times7+4\times8$$
+$$=5+12+21+32$$
+$$=70$$
+
+### The Dot Product and Vector Magnitude
+
+Note, the Pythagorean theorem is a special case of the dot product. It's also related to vector magnitude and the cosine of the angle between two vectors.
+
+$c^2=a^2+b^2$ gives the length of the hypotenuse of a right triangle with sides of length $a$ and $b$.
+
+For a triangle with sides of length $3$ and $4$, and a hypotenuse of length $c$, the Pythagorean theorem is:
+
+$$c^2=3^2+4^2$$
+$$c^2=9+16$$
+$$\sqrt{c^2}=\sqrt{25}$$
+$$c=5$$
+
+Given a vector $\mathbf{x} = \begin{bmatrix}3\\4\end{bmatrix}$, the magnitude of the vector is:
+
+$$\lVert\mathbf{x}\rVert=\sqrt{3^2+4^2}$$
+$$\lVert\mathbf{x}\rVert=\sqrt{9+16}$$
+$$\lVert\mathbf{x}\rVert=\sqrt{25}$$
+$$\lVert\mathbf{x}\rVert=5$$
+
+So the magnitude of a vector is the hypotenuse of a right triangle with sides of length $a$ and $b$.
+
+And given the vector $\mathbf{x} = \begin{bmatrix}3\\4\end{bmatrix}$, squaring $a$ and $b$ is the same as applying the dot product to the vector with itself.
+
+$$\mathbf{x}^\top\mathbf{x}=\begin{bmatrix}3 &amp; 4\end{bmatrix}\begin{bmatrix}3\\4\end{bmatrix}$$
+$$\mathbf{x}^\top\mathbf{x}=3^2+4^2$$
+$$\mathbf{x}^\top\mathbf{x}=9+16$$
+$$\mathbf{x}^\top\mathbf{x}=25$$
+$$\mathbf{x}^\top\mathbf{x}=\sqrt{25}$$
+$$\mathbf{x}^\top\mathbf{x}=5$$
+
+So generally we have
+
+$$\sqrt{\mathbf{x}^\top\mathbf{x}}=\lVert\mathbf{x}\rVert$$
+
+So the dot product of a vector with itself is the square of the magnitude of the vector.
+
+And the magnitude of a vector is the square root of the dot product of the vector with itself.
+
+$$\lVert\mathbf{x}\rVert=\sqrt{\mathbf{x}^\top\mathbf{x}}$$
+
+### The Dot Product and the Angle Between Two Vectors
+
+The angle $\theta$ between two vectors is related to the dot product by the formula:
+
+$$\mathbf{x}^\top\mathbf{y}=\lVert\mathbf{x}\rVert\lVert\mathbf{y}\rVert\cos(\theta)$$
+
+We solve the equation to get the cosine of the angle between two vectors:
+
+$$\cos(\theta)=\frac{\mathbf{x}^\top\mathbf{y}}{\lVert\mathbf{x}\rVert\lVert\mathbf{y}\rVert}$$
+
+Given $\mathbf{x}=\begin{bmatrix}2\\-3\end{bmatrix}$ and $\mathbf{y}=\begin{bmatrix}3\\2\end{bmatrix}$:
+
+$$= \frac{\begin{bmatrix}2 &amp; -3\end{bmatrix}\begin{bmatrix}3\\2\end{bmatrix}}{\sqrt{2^2+(-3)^2}\sqrt{3^2+2^2}}\\
+= \frac{0}{13}\\
+= 0
+$$
+
+Dot products are 0 when the vectors are perpendicular. Note $\theta=cos^{-1}(0)=90^\circ$.
+
+$$\mathbf{x}\perp\mathbf{y} \iff \mathbf{x}^\top\mathbf{y}=0$$
+
+Generalizing the dot product to an arbitary number of dimensions is called the inner product:
+
+$$\mathbf{a}^\top\mathbf{b}=\sum^n_{i=1}a_i b_i$$
+
+```python
+a = np.array([1,2,3,4])
+b = np.array([5,6,7,8])
+print(np.dot(a,b))
+print(a@b) # the same thing
+```
+
+```
+70
+70
+```
+
+You can scalar multiply one vector, which scales the dot product by the same amount.
+
+```python
+scalar1 = 10
+print(a*scalar1@b) # can be applied to one vector
+print((a@b)*scalar1) # or the dot product itself
+scalar1 = -10 # a negative scalar preserves the magnitude but switches the sign
+print(a*scalar1@b)
+print((a@b)*scalar1)
+```
+
+```
+700
+700
+-700
+-700
+```
+
+## The Dot Product is Distributive
+
+$$\mathbf{a}^\top(\mathbf{b}+\mathbf{c})=\mathbf{a}^\top\mathbf{b}+\mathbf{a}^\top\mathbf{c}$$
+
+```python
+a = np.array([0,1,2])
+b = np.array([3,4,5])
+c = np.array([6,7,8])
+print(np.dot(a, b+c))
+print(np.dot(a,b) + np.dot(a,c))
+```
+
+```
+37
+37
+```
+
+## Geometric Definition of the Vector Dot Product
+
+$$\alpha = \cos(\theta_{\mathbf{v},\mathbf{w}}) \lVert\mathbf{v}\rVert\,\lVert\mathbf{w}\rVert$$
+
+or
+
+$$\cos(\theta_v,_w)=\frac{\mathbf{v}^\top\mathbf{w}}{\lVert\mathbf{v}\rVert\,\lVert\mathbf{w}\rVert}$$
+
+The product of the magnitude of the two vectors, scaled by the cosine of the angle between them.
+
+the spatial cosine similarity
+
+the spatial cosine distance
+
+```
+[0 1 2] [3 4 5]
+Cosine similarity 0.8854377448471461
+Cosine distance 0.11456225515285379
+```
+
+the spatial cosine similarity
+
+the spatial cosine distance
+
+```
+[0 1 2] [6 7 8]
+Cosine similarity 0.8426548012644084
+Cosine distance 0.1573451987355916
+```
+
+angle theta between two vectors
+
+```
+Cosine angle 0.5686015478708155
+Cosine angle 32.58°
+Cosine angle 32.58°
+```
+
+scalar projection from the angle theta
+
+the length of the projection of vector a onto vector b
+
+```
+Scalar projection a -&gt; b: 1.884233417193793
+```
+
+## Orthogonal Vectors Have a Zero Dot Product
+
+*two vectors are orthogonal if:*
+- two vectors have a dot product of zero
+- two vectors meet at 90 degree angles
+
+Perpendicular vectors
+
+![Perpendicular vectors](../journal/vectors/041-0.png)
+
+Not perpendicular
+
+![Not perpendicular](../journal/vectors/042-0.png)
+
+## Hadamard Multiplication
+
+Element-wise mutliplication
+
+$$\begin{bmatrix} 5\\ 4\\ 8\\ 2\end{bmatrix} \odot \begin{bmatrix} 1\\ 0\\ .5\\ -1\end{bmatrix} = \begin{bmatrix} 5\\ 0\\ 4\\ -2\end{bmatrix}$$
+
+```python
+a = np.array([5,4,8,2])
+b = np.array([1,0,0.5, -1])
+a*b
+```
+
+```
+array([ 5.,  0.,  4., -2.])
+```
+
+## Outer Product
+
+$$\begin{bmatrix} a\\ b\\ c\end{bmatrix} \begin{bmatrix}d\, e\end{bmatrix}=\begin{bmatrix}ad\, ae\\ bd\, be\\cd\, ce\end{bmatrix}$$
+
+Denoted $\mathbf{v}\mathbf{w}^\top$ because we assume all vectors are columnar until indicated, so the outer product is column vector $\mathbf{v}$ times the row vector $\mathbf{w}$.
+
+```python
+a = np.array([1,2,3])
+b = np.array([4,5])
+print(np.outer(a,b))
+```
+
+```
+[[ 4  5]
+ [ 8 10]
+ [12 15]]
+```
+
+```python
+for _a in a:
+    for _b in b:
+        print(_a * _b)
+```
+
+```
+4
+5
+8
+10
+12
+15
+```
+
+## Orthogonal Vector Projection
+
+We want to project a point at the head of vector $\mathbf b$ onto vector $\mathbf a$ with minimum distance. This will result in a vector that intersects vector $\mathbf a$ at a right angle. The point at which the projection intersects $\mathbf{a}$ will be called $\beta$. And the vector from the head of $\mathbf{b}$ to $\beta$ will be called $\mathbf{b}-\beta\mathbf{a}$.
+
+Vector
+
+![Vector](../journal/vectors/050-0.png)
+
+The dot product between orthogonal vectors is 0. And we know the projection from the head of $\mathbf b$ will create an orthogonal vector. 
+
+So, the projection vector is orthogonal to $\beta$ on vector $\mathbf{a}$, and the dot product is zero.
+
+Thus, $$\mathbf{a}^\top(\mathbf{b}-\beta\mathbf{a})=0$$
+
+We use the distributive property of dot products and apply algebra to solve for zero.
+
+$$\mathbf{a}^\top\mathbf{b}-\beta\mathbf{a}^\top\mathbf{a}=0$$
+$$\beta\mathbf{a}^\top\mathbf{a}=\mathbf{a}^\top\mathbf{b}$$
+$$\beta=\frac{\mathbf{a}^\top\mathbf{b}}{\mathbf{a}^\top\mathbf{a}}$$
+
+Which is to say, $\beta$ is the quotient of the dot product of column vector $\mathbf{a}$ and row vector $\mathbf{b}$ over the dot product of column vector $\mathbf{a}$ and row vector $\mathbf{a}$. It scales vector $\mathbf{a}$.
+
+```python
+print(a)
+print(b)
+print(np.dot(a,b)/np.dot(a,a))
+print(a*beta) # the resulting vector is colinear with vector a, and the head is at the point which is closest to the head of vector b.
+```
+
+```
+[2 3]
+[2 1]
+0.5384615384615384
+[1.07692308 1.61538462]
+```
+
+## Orthogonal Vector Decomposition
+
+Given a vector $\mathbf{t}$, we want to decompose it into the sum of two vectors that are orthogonal and parallel to a reference vector $\mathbf{r}$.
+
+This will produce two vectors: a parallel vector $\mathbf{t\parallel r}$, and a perpendicular vector $\mathbf{t\bot r}$.
+
+So we must find a vector that is parellel to $\mathbf{r}$. Any scaled version of $\mathbf{r}$ is parallel, so we find $\mathbf{t\parallel r}$ by applying orthogonal projection.
+
+$$\mathbf{t\parallel r} = \mathbf{r}\frac{\mathbf{t}^\top\mathbf{r}}{\mathbf{r}^\top\mathbf{r}}$$
+
+Because vector $\mathbf{t\parallel r}$ is a scaled version of $\mathbf{r}$, it could be thought of as $\beta\mathbf{r}$. Rather than compute just the scalar, like in projection, we compute the scaled vector.
+
+The perpendicular and parallel vectors $\mathbf{t\parallel r}$ and $\mathbf{t\bot r}$ will sum to the target vector $\mathbf{t}$, so using algebra:
+
+$$\mathbf{t}=\mathbf{t\bot r}+\mathbf{t\parallel r}$$
+$$\mathbf{t\bot r}=\mathbf{t-t\parallel r}$$
+
+Vector Decomposition
+
+![Vector Decomposition](../journal/vectors/054-0.png)
+
+## Vector Sets
+
+Denoted like $V = \{\mathbf{v_1,...,v_n}\}$
+
+## Linear Weighted Combination
+
+Scalar-vector multiplication and addition: take a set of vectors, multiply each vector by a scalar, then add them to product a single vector.
+
+$\mathbf{w}=\lambda_1\mathbf{v}_1+\lambda_2\mathbf{v}_2+...+\lambda_n\mathbf{v}_n$
+
+All the vectors have to have the same dimensionality.
+
+$$\lambda_1=1,\,\,\lambda_2=2,\,\,\lambda_3=-3\qquad \mathbf{v}_1=\begin{bmatrix}4\\ 5\\ 1\end{bmatrix}, \mathbf{v}_2=\begin{bmatrix}-4\\ 0\\ -4\end{bmatrix}, \mathbf{v}_3=\begin{bmatrix}1\\ 3\\ 2\end{bmatrix}$$
+$$\mathbf{w}=\lambda_1\mathbf{v}_1+\lambda_2\mathbf{v}_2+\lambda_3\mathbf{v}_3=\begin{bmatrix}-7\\ -4\\ -13\end{bmatrix}$$
+
+```python
+l1 = 1
+l2 = 2
+l3 = -3
+v1 = np.array([4,5,1])
+v2 = np.array([-4,0,-4])
+v3 = np.array([1,3,2])
+l1*v1 + l2*v2 + l3*v3
+```
+
+```
+array([ -7,  -4, -13])
+```
+
+the tinygrad way
+
+```
+array([ -7,  -4, -13])
+```
+
+## Linear Independence
+
+A vector set is *linearly dependent* if at least one vector in the set can be expressed as a linear weighted combination of other vectors in that set. If no vectors in the set can be expressed as a linear weighted combination, the set is *linearly independent*.
+
+$$V = \begin{Bmatrix}\begin{bmatrix}1\\ 3\end{bmatrix},\begin{bmatrix}2\\ 7\end{bmatrix}\end{Bmatrix}\qquad S = \begin{Bmatrix}\begin{bmatrix}1\\ 3\end{bmatrix},\begin{bmatrix}2\\ 6\end{bmatrix}\end{Bmatrix}$$
+
+Vector set $V$ is *linearly independent* because neither vector can be expressed as the linear weighted combination of the other. Vector set $S$ is *linearly dependent* because one vector **can** be expressed as the linear weighted combination of the other. There is an infinite number of potential linear combinations for set $S$, two of which are $\mathbf{s}_1=0.5s_2$ and $\mathbf{s}_2=2s_1$.
+
+```python
+print(np.array([2,6])*0.5)
+print(np.array([1,3])*2)
+```
+
+```
+[1. 3.]
+[2 6]
+```
+
+So linear dependence can be expressed as $\mathbf{0}=\lambda_1\mathbf{v}_1+\lambda_2\mathbf{v}_2+...+\lambda_n\mathbf{v}_n,\quad\lambda\in\mathbb{R}$. If you can find some $\lambda$s that make the equation true, the set is linearly dependent. But, usually the equation is constrained to non-trivial solutions. That is, at least one $\lambda\ne0$. This constraint can be incorporated into the equation:
+$$\mathbf{0}=\mathbf{v}_1+...+\frac{\lambda_n}{\lambda_1}\mathbf{v}_n,\quad\lambda\in\mathbb{R},\,\lambda_1\ne0$$
+
+Linear independence means the vectors contain information.
+
+## Subspace and Span
+
+For any finite set of vectors, there are an infinite number of ways to linearly combine them using different weights, creating a *vector subspace*.
+
+The mechanism for combining all possible linear weighted combinations is the *span* of the vector set.
+
+Take, for instance:
+
+$$V = \begin{Bmatrix}\begin{bmatrix}1\\ 3\end{bmatrix}\end{Bmatrix}$$
+
+A Vector (black) and the subspace it spans (gray)
+
+![A Vector (black) and the subspace it spans (gray)](../journal/vectors/063-0.png)
+
+Now, a set of two vectors in $\mathbb{R}^3:$
+
+$$V = \begin{Bmatrix}\begin{bmatrix}1\\0\\2\end{bmatrix},\begin{bmatrix}-1\\1\\2\end{bmatrix}\end{Bmatrix}$$
+
+(FIX) Vectors in R^3 and the subspace they span
+
+![(FIX) Vectors in R^3 and the subspace they span](../journal/vectors/065-0.png)
+
+Points along a random 2D vector subspace
+
+![Points along a random 2D vector subspace](../journal/vectors/066-0.png)
+
+Points along a random 3D vector subspace
+
+![Points along a random 3D vector subspace](../journal/vectors/067-0.png)
+
+3 vectors that lie on a plane
+
+![3 vectors that lie on a plane](../journal/vectors/068-0.png)
+
+2 vectors that lie on a plane in R^3
+
+![2 vectors that lie on a plane in R^3](../journal/vectors/069-0.png)
+
+## Basis
+
+A *basis* is a set of rulers used to describe the information in a matrix.
+
+A familiar basis set is the Cartesian axis: the standard XY (2D) or XYZ (3D) plane commonly used in graphing.
+
+The basis for 2D and 3D Cartesian graphs are:
+
+$$S_2=\begin{Bmatrix}\begin{bmatrix}1\\0\end{bmatrix},\begin{bmatrix}0\\1\end{bmatrix}\end{Bmatrix}\qquad S_3=\begin{Bmatrix}\begin{bmatrix}1\\0\\0\end{bmatrix},\begin{bmatrix}0\\1\\0\end{bmatrix},\begin{bmatrix}0\\0\\1\end{bmatrix}\end{Bmatrix}$$
+
+Cartesian basis sets comprise vectors that are mutually orthogonal and unit length. It's often called the *standard basis set*.
+
+Here, we define a different basis set for illustration.
+
+$$T=\begin{Bmatrix}\begin{bmatrix}3\\1\end{bmatrix},\begin{bmatrix}-3\\1\end{bmatrix}\end{Bmatrix}$$
+
+Now consider the following graph:
+
+The difference between basis sets
+
+![The difference between basis sets](../journal/vectors/071-0.png)
+
+In the basis set $S_2$, the points above are $p=(3,1),\,q=(-6,2)$. We can express these points as the linear combination of the basis vector $S$:
+$$S=\begin{Bmatrix}\begin{bmatrix}1\\0\end{bmatrix},\begin{bmatrix}0\\1\end{bmatrix}\end{Bmatrix} \in\mathbb{R}^2$$
+$$p=3\mathbf{s}_1+1\mathbf{s}_2,\,q=-6\mathbf{s}_1+2\mathbf{s}_2$$
+
+If the basis set were:
+
+$$T=\begin{Bmatrix}\begin{bmatrix}3\\1\end{bmatrix},\begin{bmatrix}-3\\1\end{bmatrix}\end{Bmatrix}$$
+
+the same points above could be expressed as:
+
+$$p=1\mathbf{t}_1+0\mathbf{t}_2,\,q=0\mathbf{t}_1+2\mathbf{t}_2$$
+or
+$$p=\mathbf{t}_1,\,q=2\mathbf{t}_2$$
+
+## Pearson correlation coefficient
+
+Before the correlation coefficient can be calculated the data needs to be normalized to the expected range -1 to +1.
+
+First, *mean center each variable*. It means subtracting the average value from each data value.
+Then, *divide the dot product by the product of the vector norms*. Divisive normalization cancels the measurement units and scales the maximum possible correlation magnitude to $|1|$.
+
+The formula for Pearson correlation coefficient:
+
+$$\rho=\frac{\sum^n_{i=1} (x_i-\bar{x})(y_i-\bar{y})}{\sqrt{\sum^n_{i=1} (x_i-\bar{x})^2}\sqrt{\sum^n_{i=1} (y_i-\bar{y})^2}}$$
+
+Once the variables are normalized, the equation can be rewritten as:
+
+$$\rho=\frac{\widetilde{\mathbf{x}}^\top\widetilde{\mathbf{y}}}{\lVert\mathbf{\widetilde{x}}\rVert\,\lVert\mathbf{\widetilde{y}}\rVert}$$
+
+which is, to say, that the Pearson correlation coefficient is the dot product of two mean-centered variables, normalized by the magnitudes of the variables.
+
+```python
+x = np.array([0,1,2,5])
+y = np.array([100,101,102,103])
+x = x-np.mean(x)
+y = y-np.mean(y)
+pcc = np.dot(x.T,y) / ((np.linalg.norm(x)) * np.linalg.norm(y))
+print('Pearson correlation coefficient:', round(pcc,5))
+```
+
+```
+Pearson correlation coefficient: 0.95618
+```
+
+```python
+scipy.stats.pearsonr(x,y)
+```
+
+```
+PearsonRResult(statistic=np.float64(0.956182887467515), pvalue=np.float64(0.04381711253248488))
+```
+
+correlation between different vectors
+
+![correlation between different vectors](../journal/vectors/076-0.png)
+
+Mean-centering variables is a step in the correlation equation, illustrated below
+
+![Mean-centering variables is a step in the correlation equation, illustrated below](../journal/vectors/077-0.png)
+
+As the Big O complexity vectors above grow, their respective correlation coefficients describe how those vectors move apart, e.g. the correlation between the `log n` and `factorial` vectors is the smallest coefficient, as those vectors grow apart the fastest.
+
+## Correlation vs. Cosine Similarity
+
+Both give measures of similarity, but start from different assumptions.
+
+In Pearson, [0,1,2,3] and [100,101,102,103] are perfectly correlated $(\rho=1)$.
+
+But the cosine similarity is .808, because the variables are a different numeric scale.
+
+## Cosine Distance
+
+```python
+print("cosine distance from", a)
+df = pd.DataFrame([scipy.spatial.distance.cosine(a,func) for func in [logn,l,nlogn,q,e,f]], index=["logarithmic","linear","n log n","quadratic","exponential","factorial"]).T
+df.index = ["cosine distance"]
+df
+```
+
+```
+cosine distance from [ 0.          1.11111111  2.22222222  3.33333333  4.44444444  5.55555556
+  6.66666667  7.77777778  8.88888889 10.        ]
+logarithmic        linear   n log n  quadratic  exponential  \
+cosine distance     0.018452  2.220446e-16  0.005042   0.031301     0.179017   
+
+                 factorial  
+cosine distance   0.411332
+```
+
+## K-means Clustering
+
+1. Initialize $k$ centroids.
+2. Compute the Euclidean distance between each data observation (sample) and each centroid.
+3. Assign each data observation to the group with the closest centroid.
+4. Update each centroid as the average of all data observations assigned to that centroid.
+5. Repeat steps 2-4 until a convergence criteria is satisfied, or for $N$ iterations.
+
+random data for k-means clustering
+
+![random data for k-means clustering](../journal/vectors/083-0.png)
+
+STEP 1
+
+use a random choice of 3 indices to select 3 random centroids
+
+```
+[[-3.02773309  2.57701021]
+ [ 3.9243609   4.33671332]
+ [ 3.46027411  2.00236922]]
+```
+
+The Euclidean distance formula for one data observation and centroid can be computed as:
+
+$$\delta_{i,j}=\sqrt{(d^x_i-c^x_j)^2+(d^y_i-c^y_j)^2}$$
+
+where $\delta_{i,j}$ is the distance from data observation $i$ ot centroid $j$, $d^x_i$ is feature $x$ of the $i$th data observation, and $c^x_j$ is the $x$-axis coordinate of centroid $j$.
+
+STEP 2
+
+compute the distances from data observations to centroids
+
+Data is size 150 x 2 (observations by features) and centroids[ci, :] is 1 x 2 (cluster ci by features). Python broadcasts the cluster centroids 150 times, subtracting the centroid from each data observation. Then the exponent operation **2 is applied element-wise, and the axis=1 tells Python to sum across the columns, separately per row. So the output of np.sum() is a 150 x 1 array that encodes the Euclidean distance from each point to centroid ci.
+
+The square root of the original Euclidean distance formula isn't used because distance and squared distance are monotonic, so the square root is skipped to save on computation.
+
+STEP 3
+
+assign to groups (classify) based on minimum distances
+
+recompute and migrate centroids
+
+Here we loop over $k$ clusters, and use indexing to find al the data points assigned to each cluster.
+
+![k-means clustering](../journal/vectors/090-0.png)
+
+## Filtering and Feature Detection with a kernel and the dot product
+
+a random signal with plateau function use the dot product to detect changes in the signal
+
+![a random signal with plateau function use the dot product to detect changes in the signal](../journal/vectors/092-0.png)
+
+## Signal smoothing with a kernel and dot product
+
+a random signal with plateau function creates an obvious magnitude spike for illustration
+
+![a random signal with plateau function creates an obvious magnitude spike for illustration](../journal/vectors/094-0.png)
+
+Next: [Matrices](matrices.html).</textarea>
+    </article>
+  </main>
+  <noscript><p>Enable JavaScript to read this journal entry.</p></noscript>
+  <script src="../theme.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+  <script defer src="../essay.js"></script>
+</body>
+</html>

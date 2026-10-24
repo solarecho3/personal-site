@@ -1,5 +1,8 @@
 /* Turns a journal entry's Markdown into page elements. Markdown is plain text with marks
    such as ## for a heading. Tags in that text stay text. They are not HTML.
+   A picture is a line ![caption](path). Math between $ signs is drawn with KaTeX
+   when that library is on the page. The TeX stays on the element, so a save can
+   put the dollars back. Without KaTeX the TeX is shown as written.
    A code block is lines wrapped in ``` marks. The word on the opening line,
    such as python, says which language it is. The editor and the journal page
    split that block into colored pieces. The colors are in style.css and
@@ -141,6 +144,20 @@
           continue;
         }
       }
+      if (ch === "$") {
+        var math = parseMath(text, i);
+        if (math) {
+          flush();
+          var formula = document.createElement("span");
+          formula.className = "math";
+          formula.setAttribute("data-tex", math.tex);
+          if (math.display) formula.setAttribute("data-display", "1");
+          formula.textContent = math.tex;
+          parent.appendChild(formula);
+          i = math.end;
+          continue;
+        }
+      }
       if (ch === "[") {
         var link = parseLink(text, i);
         if (link) {
@@ -188,8 +205,60 @@
     return /^>\s?/.test(line);
   }
 
+  function isImage(line) {
+    return /^!\[([^\]]*)\]\(([^)\s]+)\)\s*$/.exec(line.trim());
+  }
+
   function isBlockStart(line) {
-    return isFence(line) || isRule(line) || isHeading(line) || isBullet(line) || isNumber(line) || isQuote(line);
+    return isFence(line) || isRule(line) || isHeading(line) || isBullet(line) || isNumber(line) || isQuote(line) || isImage(line);
+  }
+
+  function headingId(text) {
+    return String(text || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  }
+
+  function addFigure(container, alt, url) {
+    var safe = safeUrl(url);
+    if (!safe) {
+      addParagraph(container, alt || url);
+      return;
+    }
+    var resolved = safe;
+    if (editingHost(container) && resolved.indexOf("../") === 0) resolved = resolved.slice(3);
+    var figure = document.createElement("figure");
+    var img = document.createElement("img");
+    img.setAttribute("src", resolved);
+    img.setAttribute("data-src", safe);
+    img.setAttribute("alt", alt);
+    img.setAttribute("loading", "lazy");
+    figure.appendChild(img);
+    container.appendChild(figure);
+  }
+
+  function parseMath(text, i) {
+    if (text.charAt(i) !== "$") return null;
+    var display = text.charAt(i + 1) === "$";
+    var open = display ? i + 2 : i + 1;
+    var j = open;
+    while (j < text.length) {
+      if (text.charAt(j) === "\\") {
+        j += 2;
+        continue;
+      }
+      if (display) {
+        if (text.substr(j, 2) === "$$") {
+          var block = text.slice(open, j);
+          if (!block.trim()) return null;
+          return { tex: block, display: true, end: j + 2 };
+        }
+      } else if (text.charAt(j) === "$") {
+        var inline = text.slice(open, j);
+        if (!inline.trim()) return null;
+        return { tex: inline, display: false, end: j + 1 };
+      }
+      j += 1;
+    }
+    return null;
   }
 
   function addParagraph(container, text) {
@@ -966,6 +1035,12 @@
         index += 1;
         continue;
       }
+      var image = isImage(line);
+      if (image) {
+        addFigure(container, image[1], image[2]);
+        index += 1;
+        continue;
+      }
       var fence = isFence(line);
       if (fence) {
         var size = fence[1].length;
@@ -997,7 +1072,18 @@
       if (heading) {
         var level = heading[1].length;
         var title = document.createElement(level <= 2 ? "h2" : "h3");
-        appendInlines(title, heading[2].trim());
+        var headingText = heading[2].trim();
+        appendInlines(title, headingText);
+        var id = headingId(headingText);
+        if (id) {
+          var unique = id;
+          var n = 2;
+          while (document.getElementById(unique)) {
+            unique = id + "-" + n;
+            n += 1;
+          }
+          title.id = unique;
+        }
         container.appendChild(title);
         index += 1;
         continue;
@@ -1041,6 +1127,23 @@
     }
   }
 
+  function typesetMath(container) {
+    if (!container || editingHost(container) || !root.katex) return;
+    var nodes = container.querySelectorAll(".math");
+    for (var n = 0; n < nodes.length; n++) {
+      var node = nodes[n];
+      var tex = node.getAttribute("data-tex");
+      if (!tex) continue;
+      try {
+        root.katex.render(tex, node, {
+          throwOnError: false,
+          displayMode: node.getAttribute("data-display") === "1",
+          output: "html"
+        });
+      } catch (e) {}
+    }
+  }
+
   function render(markdown, container) {
     if (!container) return;
     var source = String(markdown || "");
@@ -1048,6 +1151,7 @@
     clear(container);
     try {
       renderBlocks(source, container, !editingHost(container));
+      typesetMath(container);
     } catch (error) {
       clear(container);
       var paragraph = document.createElement("p");

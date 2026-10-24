@@ -471,6 +471,25 @@ main section details:not([open]) > summary:focus-visible h2::before {
   border-top: 1px solid var(--ink);
 }
 
+.essay figure {
+  margin: 0.9rem 0 0;
+}
+
+.essay figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.essay .math {
+  overflow-x: auto;
+}
+
+.essay .math[data-display="1"] {
+  display: block;
+  margin: 0.7rem 0;
+}
+
 .tags {
   margin: 0.35rem 0 0;
   font-family: var(--data);

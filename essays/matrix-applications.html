@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script>try { var saved = localStorage.getItem("theme"); if (saved === "dark" || (saved !== "light" && matchMedia("(prefers-color-scheme: dark)").matches)) document.documentElement.setAttribute("data-theme", "dark"); } catch (e) {}</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Matrix applications · Adam Smith</title>
+  <link rel="icon" href="../favicon.svg">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+</head>
+<body>
+  <header>
+    <div class="identity">
+      <h1><a href="../">Adam Smith</a></h1>
+      <p class="meta">soldier, cto</p>
+      <p class="lede">- Co-founder, CTO - <a href="https://larx.io">Larx</a>.<br>
+      - US Special Operations Command Data Scientist / Analyst.<br>
+      - American special operator.</p>
+      <p class="socials"><a href="https://x.com/solarecho3" rel="me" target="#">X</a> · <a href="https://www.instagram.com/solarecho3" rel="me" target="#">Instagram</a> · <a href="https://github.com/solarecho3" rel="me" target="#">GitHub</a></p>
+    </div>
+    <div class="side">
+      <nav>
+        <a href="../#career">Career</a>
+        <a href="../#journal">Journal</a>
+        <a href="../#media">Media</a>
+      </nav>
+      <span class="theme">
+        <button type="button" data-theme-set="light">Light</button>
+        <button type="button" data-theme-set="dark">Dark</button>
+      </span>
+    </div>
+  </header>
+  <main>
+    <article class="essay">
+      <h1>Matrix applications</h1>
+      <p class="where">Covariance is the dot product between two mean-centered variables.</p>
+      <p class="tags"><a href="../#journal/math">math</a> · <a href="../#journal/matrices">matrices</a></p>
+      <div id="essay-body"></div>
+      <textarea id="essay-source" hidden>Study sequence: [Vectors](vectors.html) · [Matrices](matrices.html) · Matrix applications · [Calculus](calculus.html) · [Big O](big-o.html) · [Geometry](geometry.html) · [Signals](signals.html) · [Neural nets](neural-nets.html) · [Distributions](distributions.html)
+
+# Matrix Applications
+
+## Multivariate Data Covariance Matrices
+Covariance is interpreted the same as correlation: when variables move together it is positive, negative when they move apart, and 0 if there is no linear relationship. That's because covariance is the dot product between two mean-centered variables. It's the numerator of the [Pearson correlation coefficient](vectors.html#pearson-correlation-coefficient):
+
+$$c_{a,b} = (n-1)^{-1}\sum^n_{i=1}(x_i - \bar{x})(y_i - \bar{y})$$
+
+$x^{-1}=\frac{1}{x}$. And, as in the Pearson correlation coefficient, if $\mathbf{\widetilde{x}}$ is the mean-centered variable $\mathbf{x}$, and $$\mathbf{\widetilde{x}}^\text{T}\mathbf{\widetilde{y}}\frac{1}{n-1}$$ then covariance is simply $$\frac{\mathbf{\widetilde{x}}^\text{T}\mathbf{\widetilde{y}}}{n-1}$$
+Covariance has a normalization factor of $n-1$, where n is the number of data points. Normalization prevents the covariance from growing larger as you sum more data values together. It's analogous to dividing by $N$ to transform a sum into an average.
+
+blur around centroid (std units)
+
+![blur around centroid (std units)](../journal/matrix-applications/161-0.png)
+
+databetes dataset feature covariance
+
+![databetes dataset feature covariance](../journal/matrix-applications/162-0.png)
+
+Note that the correlation and covariance matrices are similar, except that the scales are different. This is because covariance
+
+![Note that the correlation and covariance matrices are similar, except that the scales are different. This is because covariance](../journal/matrix-applications/163-0.png)
+
+manually calculated covariance
+
+![manually calculated covariance](../journal/matrix-applications/164-0.png)
+
+## Geometric Transformations via Matrix-Vector Multiplication
+
+Pure rotation matrices are used to rotate a vector while preserving its length. A 2D rotation matrix can be expressed as: 
+$$
+\mathbf{T}=
+\begin{bmatrix}
+\cos(\theta) &amp; \sin(\theta) \\
+-\sin(\theta) &amp; \cos(\theta)
+\end{bmatrix}
+$$
+
+A pure rotation matrix is orthogonal. The columns of $\mathbf{T}$ are orthogonal because their dot product is $\cos(\theta)\sin(\theta)-\sin(\theta)\cos(\theta)$, and are unit vectors because of the Pythagorean trigonometric identity that $\cos^2(\theta)+sin^2(\theta)=1$.
+
+dot products of different angles for the rotation matrix
+
+a 0 dot product means the vectors are orthogonal
+
+```
+[np.float64(0.0),
+ np.float64(0.0),
+ np.float64(0.0),
+ np.float64(0.0),
+ np.float64(0.0),
+ np.float64(0.0),
+ np.float64(0.0)]
+```
+
+Pythagorean trig identity of different angles
+
+```
+[np.float64(1.0),
+ np.float64(1.0),
+ np.float64(1.0),
+ np.float64(0.9999999999999999),
+ np.float64(1.0),
+ np.float64(0.9999999999999999),
+ np.float64(0.9999999999999999)]
+```
+
+To use the transformation matrix $\mathbf{T}$, set $\theta$ to some angle of clockwise rotation, and multiply matrix $\mathbf{T}$ by a 2 x *N* matrix of geometric points, where each column in that matrix contains the (X,Y) coordinates for each of N data points.
+
+Geometric transformation of a matrix
+
+![Geometric transformation of a matrix](../journal/matrix-applications/169-0.png)
+
+Geometric rotations are transformations, so you can also stretch or scale. In general, the diagonal elements scale the x-axis and y-axis coordinates, while the off-diagonal elements stretch both axes.
+
+Geometric transformation of a matrix
+
+![Geometric transformation of a matrix](../journal/matrix-applications/171-0.png)
+
+apply the transformation to the points using matrix multiplication update the dots
+
+![apply the transformation to the points using matrix multiplication update the dots](../journal/matrix-applications/172-0.png)
+
+## Image Feature Detection with Convolution
+First we design a 2D gaussian kernel. The equation is:
+$$G=exp(-(X^2+Y^2)/\sigma)$$
+
+This is the same as:
+
+$$G=e^{(-(X^2+Y^2)/\sigma)}$$
+
+Where $X$ and $Y$ are 2D grids of (x,y) coordinates on which to evaluate the function, $\sigma$ is a parameter of the function called the "shape" or "width": smaller values make the Gaussian narrower, while larger values make it wider.
+
+normalize the kernel sum to 1
+
+during matmul it preserves the data scale
+
+Gaussian parameters
+
+![Gaussian parameters](../journal/matrix-applications/175-0.png)
+
+Gaussian parameters
+
+![Gaussian parameters](../journal/matrix-applications/176-0.png)
+
+![Image Feature Detection with Convolution](../journal/matrix-applications/177-0.png)
+
+![Image Feature Detection with Convolution](../journal/matrix-applications/178-0.png)
+
+to use a guassian kernel to convolve the image of china first, we must remove separate the color channels to make the
+
+![to use a guassian kernel to convolve the image of china first, we must remove separate the color channels to make the](../journal/matrix-applications/179-0.png)
+
+the shape of the original image
+
+height x width x color
+
+```
+(427, 640, 3)
+```
+
+the convolved images, combined
+
+together in an array
+
+```
+(3, 476, 689)
+```
+
+move the axes around so that
+
+the color channel is last
+
+```
+(476, 689, 3)
+```
+
+the convolution changes all the RGB values to floats they must either be normalized to float[0,1] or int[0,255]
+
+![the convolution changes all the RGB values to floats they must either be normalized to float0,1 or int0,255](../journal/matrix-applications/184-0.png)
+
+The convolution process is the same as used in [Signal smoothing with a kernel and dot product](vectors.html#signal-smoothing-with-a-kernel-and-dot-product); Hadamard multiply and then sum to retrieve the dot products. The only difference is that it is done on two dimensions instead of one.
+
+vertical edge detection with a vertical kernel
+
+![vertical edge detection with a vertical kernel](../journal/matrix-applications/186-0.png)
+
+horizontal edge detection with a horizontal kernel
+
+![horizontal edge detection with a horizontal kernel](../journal/matrix-applications/187-0.png)
+
+convolution can be used to compress image data once the edges have been detected, many of the
+
+![convolution can be used to compress image data once the edges have been detected, many of the](../journal/matrix-applications/188-0.png)
+
+## The Matrix Equation Ax=b
+
+If $\mathbf{A}$ is an $m\times n$ matrix, with columns $\mathbf{a}_1,\dots,\mathbf{a}_n$, and if $\mathbf{x}$ is in $\mathbb{R}^n$, then the product of $\mathbf{A}$ and $\mathbf{x}$ is denoted by $\mathbf{Ax}$, is the linear combination of the columns of $\mathbf{A}$ using the corresponding entries in $\mathbf{x}$ as weights:
+$$
+\mathbf{Ax}=
+\begin{bmatrix}\mathbf{a}_1&amp;\mathbf{a}_2&amp;\dots&amp;\mathbf{a}_n \end{bmatrix}
+\begin{bmatrix}
+x_1\\x_2\\\vdots\\x_n
+\end{bmatrix}
+= x_1\mathbf{a}_1 + x_2\mathbf{a}_2+\dots+x_n\mathbf{a}_n
+$$
+and can only be valid if the number of columns in $\mathbf{A}$ equals the number of entries in $\mathbf{x}$.
+
+## Matrix Inversion
+The inverse of matrix $\mathbf{A}$ is matrix $\mathbf{A}^{-1}$ ("A inverse").
+
+We use it to solve $\mathbf{Ax}=\mathbf{b}$ when $\mathbf{A}$ and $\mathbf{b}$ are known and we want to solve for $\mathbf{x}$. The solution is generally:
+
+$$
+\begin{align}
+\mathbf{Ax}&amp;=\mathbf{b} \\
+\mathbf{A^{-1}Ax}&amp;=\mathbf{A^{-1}b} \\
+\mathbf{Ix}&amp;=\mathbf{A^{-1}b}\\
+\mathbf{x}&amp;=\mathbf{A^{-1}b}
+\end{align}
+$$
+
+Types of Inverses
+
+### Full Inverse
+Only square, full-rank matrices can have a full inverse. This means that, for square, full-rank matrices $\mathbf{A^{-1}A}=\mathbf{AA^{-1}}=\mathbf{I}$.
+
+### One-sided Inverse
+A tall matrix $\mathbf{T}$ can have a *left-inverse*: $\mathbf{LT}=\mathbf{I}$ but $\mathbf{TL}\ne\mathbf{I}$, and if it is full rank-*N* (full column rank).
+
+A wide matrix $\mathbf{W}$ can have a *right-inverse*: $\mathbf{WR}=\mathbf{I}$ but $\mathbf{RW}\ne\mathbf{I}$, and if it is full rank-*M* (full row rank).
+
+### Pseudoinverse
+All full-rank matrices have pseudoinverse matrices which are the same as full and one-sided intverted matrices respectively. But reduced-rank matrices have a pseudoinverse matrix which is close, but not equal, to the identity matrix. These are called *singular* or *noninvertible*, which is pseudonymous with *reduced-rank* or *rank-deficient*.
+
+### Computing the Left-Inverse and Application
+
+Producing the identity matrix, the next 4 steps, follow the equation:
+$$(\mathbf{T}^\text{T}\mathbf{T})^{-1}(\mathbf{T}^\text{T}\mathbf{T})=\mathbf{I}$$
+In order to produce the identity matrix for $\mathbf{T}$ we use the inverse of $(\mathbf{T}^{\text{T}}\mathbf{T})$, thus we're not using the inverse of $\mathbf{T}$.
+
+Then we multiply the inverse matrix by the transposed matrix $\mathbf{T}$:
+$$\begin{align}
+\mathbf{L}&amp;=(\mathbf{T}^{\text{T}}\mathbf{T})^{-1}\mathbf{T}^{\text{T}} \\
+\mathbf{LT}&amp;=\mathbf{I}
+\end{align}
+$$
+
+generate a tall matrix
+
+![generate a tall matrix](../journal/matrix-applications/192-0.png)
+
+T.T @ T produces a full-rank matrix because T is full column rank, and all full rank matrices have an inverse
+
+![T.T @ T produces a full-rank matrix because T is full column rank, and all full rank matrices have an inverse](../journal/matrix-applications/193-0.png)
+
+produce the left inverse by matmul T.T@T**-1 @ T.T
+
+![produce the left inverse by matmul T.T@T**-1 @ T.T](../journal/matrix-applications/194-0.png)
+
+matmul the left inverse by T
+
+![matmul the left inverse by T](../journal/matrix-applications/195-0.png)
+
+The matrix inverse is unique; if a matrix has an inverse, it has exactly one. There cannot be two matrices $\mathbf{B}$ and $\mathbf{C}$ such that $\mathbf{AB}=\mathbf{I}$ and $\mathbf{AC}=\mathbf{I}$ if $\mathbf{B}\ne\mathbf{C}$.
+
+## Moore-Penrose Pseudoinverse
+Reduced-rank matrices cannot be transformed into the identity matrix via matrix multiplication, meaning they have no full or one-sided inverse. But singular matrices do have pseudoinverses. 
+
+Pseudoinverses are transformation matrices that bring a matrix close to the identity matrix. A reduced-rank matrix has an infinite number of pseudoinverses. The Moore-Penrose pseudoinverse, *MP* pseudoinverse, is the most common and the one generally referred to. 
+
+Denoted with dagger, plus, or asterisk in superscript: $\mathbf{A}^\dagger$, $\mathbf{A}^+$, or $\mathbf{A}^*$.
+
+$$
+\begin{align}
+\begin{bmatrix}
+1 &amp; 4\\
+2 &amp; 8
+\end{bmatrix}
+&amp;=\frac{1}{85}
+\begin{bmatrix}
+1 &amp; 2\\
+4 &amp; 8
+\end{bmatrix} \\
+\begin{bmatrix}
+1 &amp; 4\\
+2 &amp; 8
+\end{bmatrix}
+\frac{1}{85}
+\begin{bmatrix}
+1 &amp; 2\\
+4 &amp; 8
+\end{bmatrix}
+&amp;=
+\begin{bmatrix}
+.2 &amp; .4\\
+.4 &amp; .8
+\end{bmatrix}
+\end{align}
+$$
+
+```python
+A = np.array([
+    [1,4],
+    [2,8]
+])
+A_pinv = np.linalg.pinv(A)
+A@A_pinv
+```
+
+```
+array([[0.2, 0.4],
+       [0.4, 0.8]])
+```
+
+To compute the MP pseudoinverse take the singular value decomposition of a matrix, invert the nonzero singular values without changing the singular vectors, and reconstruct the matrix by multiplying $\mathbf{U\Sigma^+V^\text{T}}$.
+
+## Orthogonality
+
+Orthogonal Vectors
+
+![Orthogonal Vectors](../journal/matrix-applications/200-0.png)
+
+2x2 orthogonal matrix (rotation matrix)
+
+Verify orthogonality properties
+
+Property 1: Columns are orthogonal
+
+Property 2: Transpose = Inverse
+
+```
+Rotation Matrix:
+[[ 0.70710678 -0.70710678]
+ [ 0.70710678  0.70710678]]
+
+Dot product of columns: -1.0146536357569526e-17
+
+Matrix * Matrix^T:
+[[1. 0.]
+ [0. 1.]]
+```
+
+Three mutually orthogonal vectors (standard basis)
+
+Verify all pairs are orthogonal
+
+```
+3D Orthogonality Check:
+v1 · v2 = 0
+v2 · v3 = 0
+v1 · v3 = 0
+```
+
+RGB basis vectors are orthogonal
+
+![RGB basis vectors are orthogonal](../journal/matrix-applications/203-0.png)
+
+Test these properties
+
+1. Columns orthogonal
+
+2. Preserves distances
+
+```
+Columns orthogonal: True
+Original length: 1.4142135623730951
+Transformed length: 1.414213562373095
+```
+
+90° Rotation Matrix Properties
+
+![90° Rotation Matrix Properties](../journal/matrix-applications/205-0.png)
+
+Vector Under Multiple Rotations
+
+![Vector Under Multiple Rotations](../journal/matrix-applications/206-0.png)
+
+Original basis vectors
+
+![Original basis vectors](../journal/matrix-applications/207-0.png)
+
+![Original basis vectors](../journal/matrix-applications/207-1.png)
+
+![Original basis vectors](../journal/matrix-applications/207-2.png)
+
+For any 3D rotation matrix R:
+
+1. All columns are perpendicular to each other
+
+2. Each column has length 1
+
+3. R * R^T = Identity matrix
+
+Get columns
+
+Example with Z-axis rotation
+
+```
+Verifying Z-axis rotation matrix:
+Dot products (should be 0):
+col1 · col2 = 0.0000000000
+col2 · col3 = 0.0000000000
+col3 · col1 = 0.0000000000
+
+Column lengths (should be 1):
+||col1|| = 1.0000000000
+||col2|| = 1.0000000000
+||col3|| = 1.0000000000
+```
+
+### What is an orthogonal matrix?
+
+Some properties: 
+
+1.  All the columns are pair-wise orthogonal, so their dot products should be 0.
+2.  Each column @ itself is 1.
+3.  All columns norm (geometric length) to 1.
+
+### An identity matrix is an orthogonal matrix.
+
+```python
+A = np.identity(3)
+A
+```
+
+```
+array([[1., 0., 0.],
+       [0., 1., 0.],
+       [0., 0., 1.]])
+```
+
+```python
+print(
+    A[0]@A[0]
+)
+print(
+    A[0]@A[1]
+)
+print(
+    A[0]@A[2]
+)
+```
+
+```
+1.0
+0.0
+0.0
+```
+
+### A pure rotation matrix is also orthogonal
+
+```python
+θ = 20
+T = np.array(
+    [
+        [ np.cos(θ), np.sin(θ) ],
+        [ -np.sin(θ), np.cos(θ) ]
+    ])
+T
+```
+
+```
+array([[ 0.40808206,  0.91294525],
+       [-0.91294525,  0.40808206]])
+```
+
+```python
+np.linalg.norm(T[1])
+```
+
+```
+1.0
+```
+
+within rounding errors on the 10^-15th order
+
+```
+0.0
+```
+
+## The Gram-Schmidt procedure to transform a non-orthogonal matrix to an orthogonal one.
+
+```python
+A = np.random.rand(3,3)
+A
+```
+
+```
+array([[0.5499082 , 0.86189965, 0.44453349],
+       [0.54395812, 0.04501642, 0.97553863],
+       [0.49977168, 0.35489466, 0.08201685]])
+```
+
+orthogonality test
+
+```
+1.2428800593764227
+0.7715862615401271
+1.1148453073751634
+```
+
+a = np.array([2, 3])
+
+b = np.array([2, 1])
+
+beta = np.dot(a,b)/np.dot(a,a) # the orthogonal projection from the head of b, to a
+
+projected_beta = a*beta
+
+```
+array([0.5499082 , 0.86189965, 0.44453349])
+```
+
+Next: [Calculus](calculus.html).</textarea>
+    </article>
+  </main>
+  <noscript><p>Enable JavaScript to read this journal entry.</p></noscript>
+  <script src="../theme.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+  <script defer src="../essay.js"></script>
+</body>
+</html>
