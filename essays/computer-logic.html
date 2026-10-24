@@ -178,11 +178,11 @@ class SIGMOID_NEURON:
         used by optimizers to adjust weights and induce learning.
         """
 
-        def _init__(self, x1, x2):
+        def __init__(self, x1, x2):
                 self.x1 = x1
                 self.x2 = x2
 
-        def sigmoid(x):
+        def sigmoid(self, x):
                 """
                 &gt;&gt;&gt; s.sigmoid(2)
                 0.8807970779778823
@@ -196,7 +196,6 @@ class SIGMOID_NEURON:
                 0.9999546021312976
                 """
                 return 1 / (1 + (math.exp(-1*x)))
-
 ```</textarea>
     </article>
   </main>
